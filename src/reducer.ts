@@ -4,6 +4,7 @@ export const initialState = {
 
 export const actionTypes = {
     SET_USER: "SET_USER",
+    SET_THEME: "SET_THEME",
 };
 
 const reducer = (state: any, action: any) => {
@@ -13,6 +14,11 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
                 user: action.user
+            };
+        case actionTypes.SET_THEME:
+            return {
+                ...state,
+                darkState: action.darkState
             };
         default:
             return state;

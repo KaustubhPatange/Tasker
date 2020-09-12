@@ -1,4 +1,6 @@
 import firebase from "firebase";
+import { actionTypes } from "./reducer";
+import { useStateValue } from "./StateProvider";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAmUEkLk7PzWJLnACrIueryt8ubV1FCgOQ",
@@ -16,4 +18,5 @@ const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 
 export { auth, provider };
+
 // export default db;

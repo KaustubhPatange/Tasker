@@ -16,7 +16,9 @@ import Drawer from "@material-ui/core/Drawer";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { useStateValue } from "./StateProvider";
-
+import { auth } from "./config";
+import { config } from "process";
+import { actionTypes } from "./reducer";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -148,6 +150,10 @@ function Header(props: any) {
     setOpen(false);
   };
 
+  const handleLogout = () => {
+    auth.signOut();
+  };
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -158,7 +164,7 @@ function Header(props: any) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
 

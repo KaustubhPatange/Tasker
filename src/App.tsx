@@ -7,7 +7,7 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import Header from "./Header";
 import {
@@ -18,6 +18,10 @@ import {
 } from "@material-ui/core/colors";
 import Login from "./Login";
 import { useStateValue } from "./StateProvider";
+import { actionTypes } from "./reducer";
+import { AirplayTwoTone } from "@material-ui/icons";
+import firebase from "firebase";
+import { auth } from "./config";
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -54,9 +58,18 @@ function App() {
     setDarkState(!darkState);
   };
 
+  useEffect(() => {
+    auth.onAuthStateChanged((authUser) => {
+      dispatch({
+        type: actionTypes.SET_USER,
+        user: authUser,
+      });
+    });
+  }, [auth]);
+
   return (
     <ThemeProvider theme={darkTheme}>
-      {!user ? (
+      {user == null ? (
         <Login />
       ) : (
         <div>

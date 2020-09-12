@@ -1,4 +1,6 @@
 import { Button, makeStyles } from "@material-ui/core";
+import { LocalPlaySharp } from "@material-ui/icons";
+import firebase from "firebase";
 import React from "react";
 import { auth, provider } from "./config";
 import { actionTypes } from "./reducer";
@@ -24,17 +26,26 @@ function Login() {
   const classes = useStyles();
   const [state, dispatch] = useStateValue();
   const handleClick = () => {
-    auth
-      .signInWithPopup(provider)
-      .then((result) => {
-        dispatch({
-          type: actionTypes.SET_USER,
-          user: result.user,
-        });
-      })
-      .catch((error) => {
-        alert(error.message);
+    if (auth.currentUser != null) {
+      dispatch({
+        type: actionTypes.SET_USER,
+        user: auth.currentUser,
       });
+    } else {
+      auth
+        .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+          auth
+            .signInWithPopup(provider)
+            .then((result) => {})
+            .catch((error) => {
+              alert(error.message);
+            });
+        })
+        .catch((error) => {
+          alert("Error: " + error.message);
+        });
+    }
   };
 
   return (
