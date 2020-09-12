@@ -30,7 +30,9 @@ function App() {
     console.log("Clicked");
   };
   const classes = useStyles();
-  const [darkState, setDarkState] = React.useState(false);
+  const [darkState, setDarkState] = React.useState(
+    Boolean(localStorage.getItem("darkState"))
+  );
   const palletType = darkState ? "dark" : "light";
   const mainPrimaryColor = darkState ? orange[500] : lightBlue[500];
   const mainSecondaryColor = darkState ? deepOrange[900] : deepPurple[500];
@@ -47,6 +49,7 @@ function App() {
   });
 
   const handleDisplayTheme = () => {
+    localStorage.setItem("darkState", String(darkState));
     setDarkState(!darkState);
   };
 
