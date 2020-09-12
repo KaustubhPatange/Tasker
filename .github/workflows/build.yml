@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
+        node-version: [12.x]
     steps:
       - uses: actions/checkout@v2
       - run: chmod -R 777 ./
@@ -14,4 +14,4 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      - run: npm run build --if-present
+      - run: npm run-script build
