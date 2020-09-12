@@ -16,6 +16,8 @@ import {
   deepPurple,
   deepOrange,
 } from "@material-ui/core/colors";
+import Login from "./Login";
+import { useStateValue } from "./StateProvider";
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -26,9 +28,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function App() {
-  const handleFabClick = (event: any) => {
-    console.log("Clicked");
-  };
+  const [{ user }, dispatch] = useStateValue();
+  const handleFabClick = (event: any) => {};
   const classes = useStyles();
   const [darkState, setDarkState] = React.useState(
     Boolean(localStorage.getItem("darkState"))
@@ -55,20 +56,24 @@ function App() {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <div>
-        <CssBaseline />
-        <Header darkSwitch={darkState} onThemeChange={handleDisplayTheme} />
-        <Container>
-          <Fab
-            onClick={handleFabClick}
-            className={classes.fab}
-            color="primary"
-            aria-label="add"
-          >
-            <AddIcon />
-          </Fab>
-        </Container>
-      </div>
+      {!user ? (
+        <Login />
+      ) : (
+        <div>
+          <CssBaseline />
+          <Header darkSwitch={darkState} onThemeChange={handleDisplayTheme} />
+          <Container>
+            <Fab
+              onClick={handleFabClick}
+              className={classes.fab}
+              color="primary"
+              aria-label="add"
+            >
+              <AddIcon />
+            </Fab>
+          </Container>
+        </div>
+      )}
     </ThemeProvider>
   );
 }

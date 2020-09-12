@@ -15,6 +15,7 @@ import { Brightness4, Brightness7 } from "@material-ui/icons";
 import Drawer from "@material-ui/core/Drawer";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import { useStateValue } from "./StateProvider";
 
 const drawerWidth = 240;
 
@@ -108,6 +109,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Header(props: any) {
+  const [{ user }, dispatch] = useStateValue();
   const theme = useTheme();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -163,7 +165,7 @@ function Header(props: any) {
   return (
     <div className={classes.grow}>
       <AppBar
-        position="fixed"
+        position="static"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
         })}
@@ -214,7 +216,7 @@ function Header(props: any) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <Avatar />
+              <Avatar src={user.photoURL} />
             </IconButton>
           </div>
         </Toolbar>
