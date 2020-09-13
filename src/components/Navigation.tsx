@@ -1,4 +1,5 @@
 import {
+  DialogActions,
   Divider,
   Drawer,
   IconButton,
@@ -9,7 +10,7 @@ import {
   makeStyles,
   useTheme,
 } from "@material-ui/core";
-import React from "react";
+import React, { useState } from 'react';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import AssignmentIcon from "@material-ui/icons/Assignment";
@@ -19,6 +20,9 @@ import { useStateValue } from "../provider/StateProvider";
 import { actionTypes } from "../provider/reducer";
 import InfoIcon from "@material-ui/icons/Info";
 import clsx from "clsx";
+
+import PopupInfo from "./PopupInfo";
+import CustomizedDialogs from "./PopupInfo";
 
 const drawerWidth = 240;
 
@@ -57,6 +61,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Navigation(props: any) {
+
+ // const[openPopup,setOpenPopup] = useState(false)
+ const [open, setOpen] = useState(false);
+
   const [, dispatch] = useStateValue();
   const classes = useStyles();
   const theme = useTheme();
@@ -84,6 +92,13 @@ function Navigation(props: any) {
     // Show a about dialog info
     // It should contain techstack we used
     // It should show how many people were involved in building this.
+
+  
+    CustomizedDialogs();
+    
+    
+
+
   };
 
   return (
@@ -125,7 +140,11 @@ function Navigation(props: any) {
           ))}
         </List>
         <Divider />
-        <ListItem button onClick={handleAboutButtonClick}>
+        <ListItem button onClick={handleAboutButtonClick()}>
+          
+          
+          
+
           <ListItemIcon>
             <InfoIcon />
           </ListItemIcon>
@@ -133,6 +152,8 @@ function Navigation(props: any) {
         </ListItem>
       </Drawer>
     </div>
+
+     
   );
 }
 
