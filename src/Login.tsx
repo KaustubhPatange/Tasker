@@ -1,5 +1,4 @@
 import { Button, makeStyles } from "@material-ui/core";
-import { LocalPlaySharp } from "@material-ui/icons";
 import firebase from "firebase";
 import React from "react";
 import { auth, provider } from "./config";

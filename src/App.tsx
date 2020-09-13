@@ -19,9 +19,8 @@ import {
 import Login from "./Login";
 import { useStateValue } from "./StateProvider";
 import { actionTypes } from "./reducer";
-import { AirplayTwoTone } from "@material-ui/icons";
-import firebase from "firebase";
 import { auth } from "./config";
+import Load from "./Load";
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -38,6 +37,7 @@ function App() {
   const [darkState, setDarkState] = React.useState(
     Boolean(localStorage.getItem("darkState"))
   );
+  const [loadComplete, setLoadComplete] = React.useState(false);
   const palletType = darkState ? "dark" : "light";
   const mainPrimaryColor = darkState ? orange[500] : lightBlue[500];
   const mainSecondaryColor = darkState ? deepOrange[900] : deepPurple[500];
@@ -60,6 +60,9 @@ function App() {
 
   useEffect(() => {
     auth.onAuthStateChanged((authUser) => {
+      if (!loadComplete) {
+        setLoadComplete(true);
+      }
       dispatch({
         type: actionTypes.SET_USER,
         user: authUser,
@@ -67,28 +70,36 @@ function App() {
     });
   }, [auth]);
 
-  return (
-    <ThemeProvider theme={darkTheme}>
-      {user == null ? (
-        <Login />
-      ) : (
-        <div>
-          <CssBaseline />
-          <Header darkSwitch={darkState} onThemeChange={handleDisplayTheme} />
-          <Container>
-            <Fab
-              onClick={handleFabClick}
-              className={classes.fab}
-              color="primary"
-              aria-label="add"
-            >
-              <AddIcon />
-            </Fab>
-          </Container>
-        </div>
-      )}
-    </ThemeProvider>
-  );
+  if (!loadComplete) {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        <Load />
+      </ThemeProvider>
+    );
+  } else {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        {user == null ? (
+          <Login />
+        ) : (
+          <div>
+            <CssBaseline />
+            <Header darkSwitch={darkState} onThemeChange={handleDisplayTheme} />
+            <Container>
+              <Fab
+                onClick={handleFabClick}
+                className={classes.fab}
+                color="primary"
+                aria-label="add"
+              >
+                <AddIcon />
+              </Fab>
+            </Container>
+          </div>
+        )}
+      </ThemeProvider>
+    );
+  }
 }
 
 export default App;
