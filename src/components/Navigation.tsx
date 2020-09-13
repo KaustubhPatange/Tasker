@@ -7,6 +7,7 @@ import {
   ListItemIcon,
   ListItemText,
   makeStyles,
+  Typography,
   useTheme,
 } from "@material-ui/core";
 import React, { useEffect } from "react";
@@ -16,7 +17,7 @@ import AssignmentIcon from "@material-ui/icons/Assignment";
 import HomeIcon from "@material-ui/icons/Home";
 import StarOutlineIcon from "@material-ui/icons/StarBorderOutlined";
 import { useStateValue } from "../provider/StateProvider";
-import { actionTypes } from "../provider/reducer";
+import { actionTypes, navigationTypes } from "../provider/reducer";
 import InfoIcon from "@material-ui/icons/Info";
 import clsx from "clsx";
 
@@ -54,6 +55,11 @@ const useStyles = makeStyles((theme) => ({
       width: theme.spacing(9) + 1,
     },
   },
+  content: {
+    flexGrow: 1,
+    // marginLeft: theme.spacing(10),
+    padding: theme.spacing(3),
+  },
 }));
 
 function Navigation(props: any) {
@@ -62,11 +68,11 @@ function Navigation(props: any) {
   const theme = useTheme();
   const renderIcon = (name: any) => {
     switch (name) {
-      case "Home":
+      case navigationTypes.HOME:
         return <HomeIcon />;
-      case "Important":
+      case navigationTypes.IMPORTANT:
         return <StarOutlineIcon />;
-      case "Tasks":
+      case navigationTypes.TASKS:
         return <AssignmentIcon />;
       default:
         return <AssignmentIcon />;
@@ -77,7 +83,7 @@ function Navigation(props: any) {
   useEffect(() => {
     dispatch({
       type: actionTypes.SET_DRAWER_ITEM,
-      selected_drawer: "Home",
+      selected_drawer: navigationTypes.HOME,
     });
   }, []);
 
@@ -123,7 +129,11 @@ function Navigation(props: any) {
           </IconButton>
         </div>
         <List>
-          {["Home", "Important", "Tasks"].map((text, index) => (
+          {[
+            navigationTypes.HOME,
+            navigationTypes.IMPORTANT,
+            navigationTypes.TASKS,
+          ].map((text, index) => (
             <ListItem
               selected={isSelected(text)}
               onClick={() => {
