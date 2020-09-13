@@ -1,9 +1,9 @@
 import { Button, makeStyles } from "@material-ui/core";
 import firebase from "firebase";
 import React from "react";
-import { auth, provider } from "./config";
-import { actionTypes } from "./reducer";
-import { useStateValue } from "./StateProvider";
+import { auth, provider } from "../utils/config";
+import { actionTypes } from "../provider/reducer";
+import { useStateValue } from "../provider/StateProvider";
 
 const useStyles = makeStyles((theme) => ({
   container: {

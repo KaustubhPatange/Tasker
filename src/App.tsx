@@ -9,18 +9,19 @@ import {
 import AddIcon from "@material-ui/icons/Add";
 import React, { useEffect } from "react";
 import "./App.css";
-import Header from "./Header";
+import Header from "./components/Header";
 import {
   orange,
   lightBlue,
   deepPurple,
   deepOrange,
 } from "@material-ui/core/colors";
-import Login from "./Login";
-import { useStateValue } from "./StateProvider";
-import { actionTypes } from "./reducer";
-import { auth } from "./config";
-import Load from "./Load";
+import Login from "./pages/Login";
+import { useStateValue } from "./provider/StateProvider";
+import { actionTypes } from "./provider/reducer";
+import { auth } from "./utils/config";
+import Load from "./pages/Load";
+import Dashboard from "./pages/Dashboard";
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -32,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const [{ user }, dispatch] = useStateValue();
-  const handleFabClick = (event: any) => {};
   const classes = useStyles();
   const [darkState, setDarkState] = React.useState(
     Boolean(localStorage.getItem("darkState"))
@@ -53,11 +53,6 @@ function App() {
     },
   });
 
-  const handleDisplayTheme = () => {
-    localStorage.setItem("darkState", String(darkState));
-    setDarkState(!darkState);
-  };
-
   useEffect(() => {
     auth.onAuthStateChanged((authUser) => {
       if (!loadComplete) {
@@ -68,7 +63,7 @@ function App() {
         user: authUser,
       });
     });
-  }, [auth]);
+  }, []);
 
   if (!loadComplete) {
     return (
@@ -77,25 +72,16 @@ function App() {
       </ThemeProvider>
     );
   } else {
+    const handleDisplayTheme = () => {
+      localStorage.setItem("darkState", String(darkState));
+      setDarkState(!darkState);
+    };
     return (
       <ThemeProvider theme={darkTheme}>
         {user == null ? (
           <Login />
         ) : (
-          <div>
-            <CssBaseline />
-            <Header darkSwitch={darkState} onThemeChange={handleDisplayTheme} />
-            <Container>
-              <Fab
-                onClick={handleFabClick}
-                className={classes.fab}
-                color="primary"
-                aria-label="add"
-              >
-                <AddIcon />
-              </Fab>
-            </Container>
-          </div>
+          <Dashboard darkState={darkState} onThemeChange={handleDisplayTheme} />
         )}
       </ThemeProvider>
     );

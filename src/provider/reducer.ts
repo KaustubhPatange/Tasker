@@ -5,6 +5,7 @@ export const initialState = {
 export const actionTypes = {
     SET_USER: "SET_USER",
     SET_THEME: "SET_THEME",
+    SET_DRAWER_ITEM: "SET_DRAWER_ITEM",
 };
 
 const reducer = (state: any, action: any) => {
@@ -20,6 +21,11 @@ const reducer = (state: any, action: any) => {
                 ...state,
                 darkState: action.darkState
             };
+        case actionTypes.SET_DRAWER_ITEM:
+            return {
+                ...state,
+                selected_drawer: action.selected_drawer
+            }
         default:
             return state;
     }

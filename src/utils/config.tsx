@@ -1,6 +1,6 @@
 import firebase from "firebase";
-import { actionTypes } from "./reducer";
-import { useStateValue } from "./StateProvider";
+import { actionTypes } from "../provider/reducer";
+import { useStateValue } from "../provider/StateProvider";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAmUEkLk7PzWJLnACrIueryt8ubV1FCgOQ",

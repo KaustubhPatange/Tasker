@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import * as serviceWorker from "./serviceWorker";
-import { StateProvider } from "./StateProvider";
-import reducer, { initialState } from "./reducer";
+import * as serviceWorker from "./provider/serviceWorker";
+import { StateProvider } from "./provider/StateProvider";
+import reducer, { initialState } from "./provider/reducer";
 
 ReactDOM.render(
   <StateProvider initialState={initialState} reducer={reducer}>
