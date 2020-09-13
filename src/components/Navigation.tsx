@@ -8,18 +8,24 @@ import {
   ListItemIcon,
   ListItemText,
   makeStyles,
+  Typography,
   useTheme,
 } from "@material-ui/core";
+<<<<<<< HEAD
 import React, { useState } from 'react';
+=======
+import React, { useEffect } from "react";
+>>>>>>> 13daa2c6a836c7fd9a0bdccd5079e103e00f4eb7
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import HomeIcon from "@material-ui/icons/Home";
 import StarOutlineIcon from "@material-ui/icons/StarBorderOutlined";
 import { useStateValue } from "../provider/StateProvider";
-import { actionTypes } from "../provider/reducer";
+import { actionTypes, navigationTypes } from "../provider/reducer";
 import InfoIcon from "@material-ui/icons/Info";
 import clsx from "clsx";
+import CustomizedDialogs from "./PopupInfo";
 
 import PopupInfo from "./PopupInfo";
 import CustomizedDialogs from "./PopupInfo";
@@ -58,28 +64,56 @@ const useStyles = makeStyles((theme) => ({
       width: theme.spacing(9) + 1,
     },
   },
+  content: {
+    flexGrow: 1,
+    // marginLeft: theme.spacing(10),
+    padding: theme.spacing(3),
+  },
 }));
 
 function Navigation(props: any) {
+<<<<<<< HEAD
 
  // const[openPopup,setOpenPopup] = useState(false)
  const [open, setOpen] = useState(false);
 
   const [, dispatch] = useStateValue();
+=======
+  const [{ selected_drawer }, dispatch] = useStateValue();
+  const [openDialog, setOpenDialog] = React.useState(false);
+>>>>>>> 13daa2c6a836c7fd9a0bdccd5079e103e00f4eb7
   const classes = useStyles();
   const theme = useTheme();
+  const handlePopupClick = () => {
+    setOpenDialog(true);
+  };
+  const handlePopupClose = () => {
+    setOpenDialog(false);
+  };
   const renderIcon = (name: any) => {
     switch (name) {
-      case "Home":
+      case navigationTypes.HOME:
         return <HomeIcon />;
-      case "Important":
+      case navigationTypes.IMPORTANT:
         return <StarOutlineIcon />;
-      case "Tasks":
+      case navigationTypes.TASKS:
         return <AssignmentIcon />;
       default:
         return <AssignmentIcon />;
     }
   };
+
+  // Set initially selected value as Home
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_DRAWER_ITEM,
+      selected_drawer: navigationTypes.HOME,
+    });
+  }, []);
+
+  function isSelected(text: any): boolean {
+    return selected_drawer == text;
+  }
 
   const handleItemClick = (text: any) => {
     dispatch({
@@ -92,6 +126,7 @@ function Navigation(props: any) {
     // Show a about dialog info
     // It should contain techstack we used
     // It should show how many people were involved in building this.
+<<<<<<< HEAD
 
   
     CustomizedDialogs();
@@ -99,6 +134,9 @@ function Navigation(props: any) {
     
 
 
+=======
+    setOpenDialog(true);
+>>>>>>> 13daa2c6a836c7fd9a0bdccd5079e103e00f4eb7
   };
 
   return (
@@ -126,8 +164,13 @@ function Navigation(props: any) {
           </IconButton>
         </div>
         <List>
-          {["Home", "Important", "Tasks"].map((text, index) => (
+          {[
+            navigationTypes.HOME,
+            navigationTypes.IMPORTANT,
+            navigationTypes.TASKS,
+          ].map((text, index) => (
             <ListItem
+              selected={isSelected(text)}
               onClick={() => {
                 handleItemClick(text);
               }}
@@ -151,6 +194,11 @@ function Navigation(props: any) {
           <ListItemText primary="About" />
         </ListItem>
       </Drawer>
+      <CustomizedDialogs
+        state={openDialog}
+        onOpenClick={handlePopupClick}
+        onOpenClose={handlePopupClose}
+      />
     </div>
 
      

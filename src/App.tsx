@@ -6,7 +6,6 @@ import {
   makeStyles,
   ThemeProvider,
 } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
 import React, { useEffect } from "react";
 import "./App.css";
 import Header from "./components/Header";
@@ -23,17 +22,8 @@ import { auth } from "./utils/config";
 import Load from "./pages/Load";
 import Dashboard from "./pages/Dashboard";
 
-const useStyles = makeStyles((theme) => ({
-  fab: {
-    position: "absolute",
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-  },
-}));
-
 function App() {
   const [{ user }, dispatch] = useStateValue();
-  const classes = useStyles();
   const [darkState, setDarkState] = React.useState(
     Boolean(localStorage.getItem("darkState"))
   );

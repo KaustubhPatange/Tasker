@@ -8,6 +8,12 @@ export const actionTypes = {
     SET_DRAWER_ITEM: "SET_DRAWER_ITEM",
 };
 
+export const navigationTypes = {
+    HOME: "Home",
+    IMPORTANT: "Important",
+    TASKS: "Tasks",
+}
+
 const reducer = (state: any, action: any) => {
     console.log(action);
     switch (action.type) {

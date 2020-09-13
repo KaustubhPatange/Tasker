@@ -1,5 +1,5 @@
 import React from "react";
-import { fade, makeStyles } from "@material-ui/core/styles";
+import { fade, makeStyles, useTheme } from "@material-ui/core/styles";
 import clsx from "clsx";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -10,16 +10,31 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
-import { Avatar } from "@material-ui/core";
+import {
+  Avatar,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@material-ui/core";
 import { Brightness4, Brightness7 } from "@material-ui/icons";
 import { useStateValue } from "../provider/StateProvider";
 import { auth } from "../utils/config";
 import Navigation from "./Navigation";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import AssignmentIcon from "@material-ui/icons/Assignment";
+import HomeIcon from "@material-ui/icons/Home";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
+  },
+  root: {
+    display: "flex",
   },
   title: {
     display: "none",
@@ -93,9 +108,22 @@ const useStyles = makeStyles((theme) => ({
   hide: {
     display: "none",
   },
+  toolbar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+  },
 }));
 
 function Header(props: any) {
+  const theme = useTheme();
   const [{ user }] = useStateValue();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -153,7 +181,7 @@ function Header(props: any) {
   );
 
   return (
-    <div className={classes.grow}>
+    <div className={classes.root}>
       <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
@@ -218,6 +246,10 @@ function Header(props: any) {
         onHideButtonClick={handleDrawerClose}
       />
       {renderMenu}
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        {props.renderNavigation}
+      </main>
     </div>
   );
 }
