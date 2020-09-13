@@ -9,7 +9,7 @@ import {
   makeStyles,
   useTheme,
 } from "@material-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import AssignmentIcon from "@material-ui/icons/Assignment";
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Navigation(props: any) {
-  const [, dispatch] = useStateValue();
+  const [{ selected_drawer }, dispatch] = useStateValue();
   const classes = useStyles();
   const theme = useTheme();
   const renderIcon = (name: any) => {
@@ -72,6 +72,18 @@ function Navigation(props: any) {
         return <AssignmentIcon />;
     }
   };
+
+  // Set initially selected value as Home
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_DRAWER_ITEM,
+      selected_drawer: "Home",
+    });
+  }, []);
+
+  function isSelected(text: any): boolean {
+    return selected_drawer == text;
+  }
 
   const handleItemClick = (text: any) => {
     dispatch({
@@ -113,6 +125,7 @@ function Navigation(props: any) {
         <List>
           {["Home", "Important", "Tasks"].map((text, index) => (
             <ListItem
+              selected={isSelected(text)}
               onClick={() => {
                 handleItemClick(text);
               }}
