@@ -7,15 +7,21 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
-import Header from "./Header";
+import Header from "./components/Header";
 import {
   orange,
   lightBlue,
   deepPurple,
   deepOrange,
 } from "@material-ui/core/colors";
+import Login from "./pages/Login";
+import { useStateValue } from "./provider/StateProvider";
+import { actionTypes } from "./provider/reducer";
+import { auth } from "./utils/config";
+import Load from "./pages/Load";
+import Dashboard from "./pages/Dashboard";
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -26,11 +32,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function App() {
-  const handleFabClick = (event: any) => {
-    console.log("Clicked");
-  };
+  const [{ user }, dispatch] = useStateValue();
   const classes = useStyles();
-  const [darkState, setDarkState] = React.useState(false);
+  const [darkState, setDarkState] = React.useState(
+    Boolean(localStorage.getItem("darkState"))
+  );
+  const [loadComplete, setLoadComplete] = React.useState(false);
   const palletType = darkState ? "dark" : "light";
   const mainPrimaryColor = darkState ? orange[500] : lightBlue[500];
   const mainSecondaryColor = darkState ? deepOrange[900] : deepPurple[500];
@@ -46,28 +53,39 @@ function App() {
     },
   });
 
-  const handleDisplayTheme = () => {
-    setDarkState(!darkState);
-  };
+  useEffect(() => {
+    auth.onAuthStateChanged((authUser) => {
+      if (!loadComplete) {
+        setLoadComplete(true);
+      }
+      dispatch({
+        type: actionTypes.SET_USER,
+        user: authUser,
+      });
+    });
+  }, []);
 
-  return (
-    <ThemeProvider theme={darkTheme}>
-      <div>
-        <CssBaseline />
-        <Header darkSwitch={darkState} onThemeChange={handleDisplayTheme} />
-        <Container>
-          <Fab
-            onClick={handleFabClick}
-            className={classes.fab}
-            color="primary"
-            aria-label="add"
-          >
-            <AddIcon />
-          </Fab>
-        </Container>
-      </div>
-    </ThemeProvider>
-  );
+  if (!loadComplete) {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        <Load />
+      </ThemeProvider>
+    );
+  } else {
+    const handleDisplayTheme = () => {
+      localStorage.setItem("darkState", String(darkState));
+      setDarkState(!darkState);
+    };
+    return (
+      <ThemeProvider theme={darkTheme}>
+        {user == null ? (
+          <Login />
+        ) : (
+          <Dashboard darkState={darkState} onThemeChange={handleDisplayTheme} />
+        )}
+      </ThemeProvider>
+    );
+  }
 }
 
 export default App;

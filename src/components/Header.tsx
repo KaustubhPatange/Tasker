@@ -9,13 +9,29 @@ import InputBase from "@material-ui/core/InputBase";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
+import InboxIcon from "@material-ui/icons/Inbox";
+import AssignmentIcon from "@material-ui/icons/Assignment";
+import MailIcon from "@material-ui/icons/Mail";
+import HomeIcon from "@material-ui/icons/Home";
+import StarOutlineIcon from "@material-ui/icons/StarBorderOutlined";
 import SearchIcon from "@material-ui/icons/Search";
-import { Avatar, Divider, useTheme } from "@material-ui/core";
+import {
+  Avatar,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  useTheme,
+} from "@material-ui/core";
 import { Brightness4, Brightness7 } from "@material-ui/icons";
 import Drawer from "@material-ui/core/Drawer";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-
+import { useStateValue } from "../provider/StateProvider";
+import { auth } from "../utils/config";
+import { config } from "process";
+import { actionTypes } from "../provider/reducer";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -108,6 +124,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Header(props: any) {
+  const [{ user }, dispatch] = useStateValue();
   const theme = useTheme();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -146,6 +163,10 @@ function Header(props: any) {
     setOpen(false);
   };
 
+  const handleLogout = () => {
+    auth.signOut();
+  };
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -156,14 +177,34 @@ function Header(props: any) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
+
+  const handleItemClick = (text: any) => {
+    dispatch({
+      type: actionTypes.SET_DRAWER_ITEM,
+      selected_drawer: text,
+    });
+  };
+
+  const renderIcon = (name: any) => {
+    switch (name) {
+      case "Home":
+        return <HomeIcon />;
+      case "Important":
+        return <StarOutlineIcon />;
+      case "Tasks":
+        return <AssignmentIcon />;
+      default:
+        return <SearchIcon />;
+    }
+  };
 
   return (
     <div className={classes.grow}>
       <AppBar
-        position="fixed"
+        position="static"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
         })}
@@ -214,7 +255,7 @@ function Header(props: any) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <Avatar />
+              <Avatar src={user.photoURL} />
             </IconButton>
           </div>
         </Toolbar>
@@ -237,6 +278,20 @@ function Header(props: any) {
             )}
           </IconButton>
         </div>
+        <List>
+          {["Home", "Important", "Tasks"].map((text, index) => (
+            <ListItem
+              onClick={() => {
+                handleItemClick(text);
+              }}
+              button
+              key={text}
+            >
+              <ListItemIcon>{renderIcon(text)}</ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
+        </List>
         <Divider />
       </Drawer>
       {renderMenu}
