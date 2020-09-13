@@ -20,6 +20,7 @@ import { useStateValue } from "../provider/StateProvider";
 import { actionTypes, navigationTypes } from "../provider/reducer";
 import InfoIcon from "@material-ui/icons/Info";
 import clsx from "clsx";
+import CustomizedDialogs from "./PopupInfo";
 
 const drawerWidth = 240;
 
@@ -64,8 +65,15 @@ const useStyles = makeStyles((theme) => ({
 
 function Navigation(props: any) {
   const [{ selected_drawer }, dispatch] = useStateValue();
+  const [openDialog, setOpenDialog] = React.useState(false);
   const classes = useStyles();
   const theme = useTheme();
+  const handlePopupClick = () => {
+    setOpenDialog(true);
+  };
+  const handlePopupClose = () => {
+    setOpenDialog(false);
+  };
   const renderIcon = (name: any) => {
     switch (name) {
       case navigationTypes.HOME:
@@ -102,6 +110,7 @@ function Navigation(props: any) {
     // Show a about dialog info
     // It should contain techstack we used
     // It should show how many people were involved in building this.
+    setOpenDialog(true);
   };
 
   return (
@@ -155,6 +164,11 @@ function Navigation(props: any) {
           <ListItemText primary="About" />
         </ListItem>
       </Drawer>
+      <CustomizedDialogs
+        state={openDialog}
+        onOpenClick={handlePopupClick}
+        onOpenClose={handlePopupClose}
+      />
     </div>
   );
 }
