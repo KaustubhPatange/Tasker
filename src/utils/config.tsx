@@ -13,10 +13,22 @@ const firebaseConfig = {
 };
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
-// const db = firebaseApp.firestore()
+const db = firebaseApp.firestore();
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 
-export { auth, provider };
+export type firebaseData = firebase.firestore.QueryDocumentSnapshot<
+  firebase.firestore.DocumentData
+>;
 
-// export default db;
+export type firebaseTaskData = {
+  title: string;
+  description: string;
+  isDue: boolean;
+  isCompleted: boolean;
+  dateString: string;
+  isImportant: boolean;
+  id: any;
+};
+
+export { auth, provider, db };

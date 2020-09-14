@@ -1,5 +1,5 @@
 import React from "react";
-import { fade, makeStyles } from "@material-ui/core/styles";
+import { fade, makeStyles, useTheme } from "@material-ui/core/styles";
 import clsx from "clsx";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -9,37 +9,32 @@ import InputBase from "@material-ui/core/InputBase";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
-import InboxIcon from "@material-ui/icons/Inbox";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import MailIcon from "@material-ui/icons/Mail";
-import HomeIcon from "@material-ui/icons/Home";
-import StarOutlineIcon from "@material-ui/icons/StarBorderOutlined";
 import SearchIcon from "@material-ui/icons/Search";
 import {
   Avatar,
   Divider,
+  Drawer,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  useTheme,
 } from "@material-ui/core";
 import { Brightness4, Brightness7 } from "@material-ui/icons";
-import Drawer from "@material-ui/core/Drawer";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { useStateValue } from "../provider/StateProvider";
 import { auth } from "../utils/config";
-import { config } from "process";
-import { actionTypes } from "../provider/reducer";
+import Navigation from "./Navigation";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import AssignmentIcon from "@material-ui/icons/Assignment";
+import HomeIcon from "@material-ui/icons/Home";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
-  menuButton: {
-    marginRight: theme.spacing(2),
+  root: {
+    display: "flex",
   },
   title: {
     display: "none",
@@ -93,43 +88,47 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   appBar: {
-    transition: theme.transitions.create(["margin", "width"], {
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
   appBarShift: {
-    width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
-    transition: theme.transitions.create(["margin", "width"], {
-      easing: theme.transitions.easing.easeOut,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
+  menuButton: {
+    marginRight: 36,
   },
-  drawerPaper: {
-    width: drawerWidth,
+  hide: {
+    display: "none",
   },
-  drawerHeader: {
+  toolbar: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "flex-end",
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
-    justifyContent: "flex-end",
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
   },
 }));
 
 function Header(props: any) {
-  const [{ user }, dispatch] = useStateValue();
   const theme = useTheme();
+  const [{ user }] = useStateValue();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
+  const [, setMobileMoreAnchorEl] = React.useState(null);
+  const [drawerOpen, setDawerOpen] = React.useState(false);
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -156,11 +155,11 @@ function Header(props: any) {
   };
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setDawerOpen(true);
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    setDawerOpen(false);
   };
 
   const handleLogout = () => {
@@ -181,41 +180,23 @@ function Header(props: any) {
     </Menu>
   );
 
-  const handleItemClick = (text: any) => {
-    dispatch({
-      type: actionTypes.SET_DRAWER_ITEM,
-      selected_drawer: text,
-    });
-  };
-
-  const renderIcon = (name: any) => {
-    switch (name) {
-      case "Home":
-        return <HomeIcon />;
-      case "Important":
-        return <StarOutlineIcon />;
-      case "Tasks":
-        return <AssignmentIcon />;
-      default:
-        return <SearchIcon />;
-    }
-  };
-
   return (
-    <div className={classes.grow}>
+    <div className={classes.root}>
       <AppBar
-        position="static"
+        position="fixed"
         className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
+          [classes.appBarShift]: drawerOpen,
         })}
       >
         <Toolbar>
           <IconButton
-            edge="start"
-            className={classes.menuButton}
-            onClick={handleDrawerOpen}
             color="inherit"
             aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            className={clsx(classes.menuButton, {
+              [classes.hide]: drawerOpen,
+            })}
           >
             <MenuIcon />
           </IconButton>
@@ -260,41 +241,15 @@ function Header(props: any) {
           </div>
         </Toolbar>
       </AppBar>
-      <Drawer
-        className={classes.drawer}
-        variant="persistent"
-        anchor="left"
-        open={open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </div>
-        <List>
-          {["Home", "Important", "Tasks"].map((text, index) => (
-            <ListItem
-              onClick={() => {
-                handleItemClick(text);
-              }}
-              button
-              key={text}
-            >
-              <ListItemIcon>{renderIcon(text)}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-      </Drawer>
+      <Navigation
+        drawerOpen={drawerOpen}
+        onHideButtonClick={handleDrawerClose}
+      />
       {renderMenu}
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        {props.renderNavigation}
+      </main>
     </div>
   );
 }
