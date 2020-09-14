@@ -1,7 +1,10 @@
-import { Card, Fab, makeStyles, Typography } from "@material-ui/core";
+import { Card, Checkbox, Fab, makeStyles, Typography } from "@material-ui/core";
 import React from "react";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
+import StarCheckedIcon from "@material-ui/icons/Star";
+import StarUnCheckedIcon from "@material-ui/icons/StarBorder";
+import TaskAddDialog from "../components/dialogs/TaskAddDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,7 +15,15 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   card: {
-    display: "flex",
+    margin: theme.spacing(1, 0),
+    display: "grid",
+    gridColumnGap: "10px",
+    alignItems: "center",
+    gridTemplateColumns: "50px auto 50px",
+  },
+  description: {
+    fontSize: "13px",
+    color: theme.palette.text.secondary,
   },
   icon: {
     marginLeft: theme.spacing(2),
@@ -26,6 +37,12 @@ const useStyles = makeStyles((theme) => ({
 
 function Tasks() {
   const classes = useStyles();
+  const [openAddDialog, setOpenAddDialog] = React.useState(false);
+
+  const handleFabClick = () => {
+    setOpenAddDialog(!openAddDialog);
+  };
+
   return (
     <>
       <div className={classes.root}>
@@ -37,12 +54,29 @@ function Tasks() {
         </div>
 
         <Card variant="outlined">
-          <div className={classes.card}></div>
+          <div className={classes.card}>
+            <Checkbox inputProps={{ "aria-label": "primary checkbox" }} />
+            <div>
+              <Typography>
+                <span>This is a text</span>
+              </Typography>
+              <span className={classes.description}>
+                This is a small description
+              </span>
+            </div>
+            <StarUnCheckedIcon />
+          </div>
         </Card>
 
-        <Fab className={classes.fab} color="primary" aria-label="add">
+        <Fab
+          className={classes.fab}
+          onClick={handleFabClick}
+          color="primary"
+          aria-label="add"
+        >
           <AddIcon />
         </Fab>
+        <TaskAddDialog onClose={handleFabClick} state={openAddDialog} />
       </div>
     </>
   );

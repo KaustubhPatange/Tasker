@@ -7,7 +7,6 @@ import {
   ListItemIcon,
   ListItemText,
   makeStyles,
-  Typography,
   useTheme,
 } from "@material-ui/core";
 import React, { useEffect } from "react";
