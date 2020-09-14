@@ -16,11 +16,22 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Typography from "@material-ui/core/Typography";
 import DateFnsUtils from "@date-io/date-fns";
-import { Checkbox, FormControlLabel, TextField } from "@material-ui/core";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import {
+  Checkbox,
+  FormControlLabel,
+  Snackbar,
+  TextField,
+} from "@material-ui/core";
 import {
   MuiPickersUtilsProvider,
   KeyboardDateTimePicker,
 } from "@material-ui/pickers";
+import { db, auth, firebaseTaskData } from "../../utils/config";
+
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -52,9 +63,31 @@ const useStyles = makeStyles((theme) => ({
 
 function TaskAddDialog(props: DialogProps) {
   const classes = useStyles();
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>();
+  const [selectedDate, setSelectedDate] = React.useState<Date | null>(
+    new Date()
+  );
+  const [snackbarState, setSnackbarState] = React.useState(false);
   const [pickDateChecked, setPickDateChecked] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [snackbarMessage, setSnackbarMessage] = useState("Invalid");
+  const [snackbarType, setSnackbarType] = useState<AlertProps["severity"]>(
+    "info"
+  );
 
+  useEffect(() => {
+    if (props.editMode === true) {
+      setTitle(props.editData.title);
+      setDescription(props.editData.description);
+      setPickDateChecked(props.editData.isDue);
+      setSelectedDate(new Date(props.editData.dateString));
+    }
+    console.log("Render To-do: " + props.editMode);
+  }, [props.editMode]);
+
+  const onSnackbarClose = () => {
+    setSnackbarState(false);
+  };
   const handlePickDateCheckbox = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -67,6 +100,47 @@ function TaskAddDialog(props: DialogProps) {
     setPickDateChecked(false);
     props.onClose();
   };
+  const handleTitleChange = (event: any) => {
+    setTitle(event.currentTarget.value);
+  };
+  const handleDescriptionChange = (event: any) => {
+    setDescription(event.currentTarget.value);
+  };
+
+  function createSnackbar(message: string, type: AlertProps["severity"]) {
+    setSnackbarMessage(message);
+    setSnackbarType(type);
+    setSnackbarState(true);
+  }
+
+  const handleOnSave = () => {
+    try {
+      if (title.length === 0) throw new Error("brrr");
+      const currentDate = selectedDate?.toISOString();
+
+      if (auth.currentUser?.uid === null) throw new Error("brrr");
+      pushToFirebase(
+        title,
+        description,
+        currentDate,
+        pickDateChecked,
+        props.editMode,
+        props.editData,
+        () => {
+          createSnackbar("Successfully saved data", "info");
+          handleCloseDialog();
+        },
+        (error: any) => {
+          createSnackbar(
+            "Could not save data due to " + error.message,
+            "error"
+          );
+        }
+      );
+    } catch {
+      createSnackbar("Invalid arguments supplied", "error");
+    }
+  };
   return (
     <div>
       <Dialog
@@ -76,7 +150,7 @@ function TaskAddDialog(props: DialogProps) {
         fullWidth
       >
         <DialogTitle id="customized-dialog-title" onClose={handleCloseDialog}>
-          Create a new task
+          Create or Edit a task
         </DialogTitle>
         <DialogContent dividers>
           <TextField
@@ -85,6 +159,8 @@ function TaskAddDialog(props: DialogProps) {
             variant="outlined"
             id="task_title"
             label="Title"
+            value={title}
+            onChange={handleTitleChange}
             fullWidth
           />
           <TextField
@@ -95,6 +171,8 @@ function TaskAddDialog(props: DialogProps) {
             variant="outlined"
             id="task_description"
             label="Description"
+            value={description}
+            onChange={handleDescriptionChange}
             fullWidth
           />
           <div className={classes.dateTimeLayout}>
@@ -124,13 +202,66 @@ function TaskAddDialog(props: DialogProps) {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleCloseDialog} color="primary">
+          <Button autoFocus onClick={handleOnSave} color="primary">
             Save changes
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={snackbarState}
+        autoHideDuration={2500}
+        onClose={onSnackbarClose}
+      >
+        <Alert onClose={onSnackbarClose} severity={snackbarType}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
+}
+
+function pushToFirebase(
+  title: any,
+  description: any,
+  currentDate: any,
+  pickDueDate: boolean,
+  editMode: boolean,
+  editData: firebaseTaskData,
+  onSuccess: () => void,
+  onError: (error: any) => void
+) {
+  const ref = db
+    .collection("users")
+    .doc(auth.currentUser?.uid!!)
+    .collection("tasks");
+  if (editMode) {
+    const data = {
+      title: title,
+      description: description,
+      dateString: currentDate,
+      isDue: pickDueDate,
+      isCompleted: editData.isCompleted,
+      isImportant: editData.isImportant,
+    };
+    ref
+      .doc(editData.id)
+      .update(data)
+      .then(() => onSuccess())
+      .catch((error) => onError(error));
+  } else {
+    const data = {
+      title: title,
+      description: description,
+      dateString: currentDate,
+      isDue: pickDueDate,
+      isCompleted: false,
+      isImportant: true,
+    };
+    ref
+      .add(data)
+      .then(() => onSuccess())
+      .catch((error) => onError(error));
+  }
 }
 
 export interface DialogTitleProps extends WithStyles<typeof styles> {
@@ -140,6 +271,8 @@ export interface DialogTitleProps extends WithStyles<typeof styles> {
 }
 
 export interface DialogProps {
+  editMode: boolean;
+  editData: firebaseTaskData | any;
   state: boolean;
   onClose: () => void;
 }

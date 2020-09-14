@@ -6,6 +6,7 @@ export const actionTypes = {
     SET_USER: "SET_USER",
     SET_THEME: "SET_THEME",
     SET_DRAWER_ITEM: "SET_DRAWER_ITEM",
+    SET_TASK_DOCS: "SET_TASK_DOCS"
 };
 
 export const navigationTypes = {
@@ -31,6 +32,11 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
                 selected_drawer: action.selected_drawer
+            }
+        case actionTypes.SET_TASK_DOCS:
+            return {
+                ...state,
+                taskDocs: action.taskDocs
             }
         default:
             return state;

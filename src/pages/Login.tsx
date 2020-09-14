@@ -1,7 +1,7 @@
 import { Button, makeStyles } from "@material-ui/core";
 import firebase from "firebase";
 import React from "react";
-import { auth, provider } from "../utils/config";
+import { auth, provider, db } from "../utils/config";
 import { actionTypes } from "../provider/reducer";
 import { useStateValue } from "../provider/StateProvider";
 
@@ -36,7 +36,19 @@ function Login() {
         .then(() => {
           auth
             .signInWithPopup(provider)
-            .then((result) => {})
+            .then((result) => {
+              const ref = db.collection("users").doc(result.user?.uid);
+              ref
+                .set({
+                  displayName: result.user?.displayName,
+                  email: result.user?.email,
+                  uid: result.user?.uid,
+                  profileUrl: result.user?.photoURL,
+                })
+                .then(() => {
+                  console.log("Data saved: " + result.user?.email);
+                });
+            })
             .catch((error) => {
               alert(error.message);
             });

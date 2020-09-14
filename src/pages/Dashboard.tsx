@@ -5,12 +5,13 @@ import {
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../components/Header";
 import AddIcon from "@material-ui/icons/Add";
 import { useStateValue } from "../provider/StateProvider";
 import { navigationTypes } from "../provider/reducer";
 import Tasks from "./Tasks";
+import { db, auth, firebaseData } from "../utils/config";
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -34,28 +35,42 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Dashboard(props: any) {
-  const [{ selected_drawer }, dispatch] = useStateValue();
   const classes = useStyles();
+  const [{ selected_drawer }, dispatch] = useStateValue();
+  const [docs, setDocs] = React.useState<firebaseData[]>();
+
+  useEffect(() => {
+    console.log("Render dashboard");
+    db.collection("users") // TODO: Undo
+      .doc(auth.currentUser?.uid!!)
+      .collection("tasks")
+      .onSnapshot(
+        (snapshot) => {
+          setDocs(snapshot.docs.reverse());
+        },
+        (error) => {}
+      );
+  }, []);
   return (
     <div>
       <CssBaseline />
       <Header
         darkSwitch={props.darkState}
         onThemeChange={props.onThemeChange}
-        renderNavigation={NavigationRender(selected_drawer)}
+        renderNavigation={NavigationRender(selected_drawer, docs!!)}
       />
     </div>
   );
 }
 
-function NavigationRender(selected_drawer: any): any {
+function NavigationRender(selected_drawer: any, docs: firebaseData[]): any {
   switch (selected_drawer) {
     case navigationTypes.HOME:
       return <div>Home</div>;
     case navigationTypes.IMPORTANT:
       return <div>Important</div>;
     case navigationTypes.TASKS:
-      return <Tasks />;
+      return <Tasks data={docs} />;
     default:
       return <div></div>;
   }

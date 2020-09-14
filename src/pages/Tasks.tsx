@@ -1,10 +1,11 @@
-import { Card, Checkbox, Fab, makeStyles, Typography } from "@material-ui/core";
-import React from "react";
+import { Fab, makeStyles, Typography } from "@material-ui/core";
+import React, { useEffect } from "react";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
-import StarCheckedIcon from "@material-ui/icons/Star";
-import StarUnCheckedIcon from "@material-ui/icons/StarBorder";
 import TaskAddDialog from "../components/dialogs/TaskAddDialog";
+import { firebaseData, firebaseTaskData } from "../utils/config";
+import TaskItem from "../components/TaskItem";
+import { convertToTaskItemFrom } from "../utils/common";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,17 +14,6 @@ const useStyles = makeStyles((theme) => ({
   header: {
     display: "flex",
     alignItems: "center",
-  },
-  card: {
-    margin: theme.spacing(1, 0),
-    display: "grid",
-    gridColumnGap: "10px",
-    alignItems: "center",
-    gridTemplateColumns: "50px auto 50px",
-  },
-  description: {
-    fontSize: "13px",
-    color: theme.palette.text.secondary,
   },
   icon: {
     marginLeft: theme.spacing(2),
@@ -35,39 +25,46 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Tasks() {
+type TaskProps = {
+  data: firebaseData[];
+};
+
+function Tasks(props: TaskProps) {
   const classes = useStyles();
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
+  const [isEditMode, setIsEditMode] = React.useState(false);
+  const [editData, setEditData] = React.useState<firebaseTaskData | null>(null);
 
   const handleFabClick = () => {
+    setIsEditMode(false);
+    setEditData(null);
     setOpenAddDialog(!openAddDialog);
+  };
+
+  const onEditClick = (e: firebaseData) => {
+    setIsEditMode(true);
+    setEditData(convertToTaskItemFrom(e));
+    setOpenAddDialog(true);
   };
 
   return (
     <>
       <div className={classes.root}>
         <div className={classes.header}>
-          <Typography>
-            <h1>Tasks</h1>
-          </Typography>
+          <h1>Tasks</h1>
           <AssignmentIcon className={classes.icon} />
         </div>
-
-        <Card variant="outlined">
-          <div className={classes.card}>
-            <Checkbox inputProps={{ "aria-label": "primary checkbox" }} />
-            <div>
-              <Typography>
-                <span>This is a text</span>
-              </Typography>
-              <span className={classes.description}>
-                This is a small description
-              </span>
-            </div>
-            <StarUnCheckedIcon />
-          </div>
-        </Card>
-
+        {props.data != null ? (
+          props.data.map((e) => (
+            <TaskItem
+              key={e.id}
+              taskData={convertToTaskItemFrom(e)}
+              onEditItemClick={() => onEditClick(e)}
+            />
+          ))
+        ) : (
+          <div></div>
+        )}
         <Fab
           className={classes.fab}
           onClick={handleFabClick}
@@ -76,7 +73,12 @@ function Tasks() {
         >
           <AddIcon />
         </Fab>
-        <TaskAddDialog onClose={handleFabClick} state={openAddDialog} />
+        <TaskAddDialog
+          editData={editData}
+          editMode={isEditMode}
+          onClose={handleFabClick}
+          state={openAddDialog}
+        />
       </div>
     </>
   );
