@@ -20,7 +20,7 @@ import { useStateValue } from "../provider/StateProvider";
 import { actionTypes, navigationTypes } from "../provider/reducer";
 import InfoIcon from "@material-ui/icons/Info";
 import clsx from "clsx";
-import CustomizedDialogs from "./PopupInfo";
+import CustomizedDialogs from "./dialogs/AboutDialog";
 
 const drawerWidth = 240;
 
