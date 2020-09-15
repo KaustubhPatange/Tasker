@@ -6,6 +6,7 @@ export const actionTypes = {
     SET_TASK_FILTER: "SET_TASK_FILTER",
     SET_INVERT: "SET_INVERT",
     SET_SHOW_SEARCH: "SET_SHOW_SEARCH",
+    SET_SEARCH_FILTER: "SET_SEARCH_FILTER",
 };
 
 export const navigationTypes = {
@@ -28,6 +29,7 @@ export const initialState = {
     filterType: taskSortTypes.CREATION_DATE,
     invertItems: false,
     showSearchBar: false,
+    searchFilter: "",
 };
 
 const reducer = (state: any, action: any) => {
@@ -67,6 +69,11 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
                 showSearchBar: action.showSearchBar
+            }
+        case actionTypes.SET_SEARCH_FILTER:
+            return {
+                ...state,
+                searchFilter: action.searchFilter
             }
         default:
             return state;

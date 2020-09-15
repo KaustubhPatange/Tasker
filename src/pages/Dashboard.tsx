@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import { useStateValue } from "../provider/StateProvider";
 import { actionTypes, navigationTypes } from "../provider/reducer";
 import Tasks from "./Tasks";
-import { db, auth, firebaseData } from "../utils/config";
+import { db, auth } from "../utils/config";
 import { applyDocFilter } from "../utils/common";
 import Home from "./Home";
 
@@ -13,16 +13,14 @@ function Dashboard(props: any) {
     { selected_drawer, filterType, taskDocs, invertItems },
     dispatch,
   ] = useStateValue();
-  const [docs, setDocs] = React.useState<firebaseData[]>();
 
   useEffect(() => {
     console.log("Render dashboard");
-    db.collection("users") // TODO: Undo
+    db.collection("users")
       .doc(auth.currentUser?.uid!!)
       .collection("tasks")
       .onSnapshot(
         (snapshot) => {
-          setDocs(snapshot.docs);
           const items = !invertItems
             ? applyDocFilter(snapshot.docs!!, filterType)
             : applyDocFilter(snapshot.docs!!, filterType)?.reverse();
@@ -38,13 +36,12 @@ function Dashboard(props: any) {
   useEffect(() => {
     console.log("Filter Type: " + filterType);
     const items = !invertItems
-      ? applyDocFilter(docs!!, filterType)
-      : applyDocFilter(docs!!, filterType)?.reverse();
+      ? applyDocFilter(taskDocs!!, filterType)
+      : applyDocFilter(taskDocs!!, filterType)?.reverse();
     dispatch({
       type: actionTypes.SET_TASK_DOCS,
       taskDocs: items,
     });
-    // setDocs(applyDocFilter(docs!!, filterType));
   }, [filterType, invertItems]);
 
   return (

@@ -9,7 +9,7 @@ import {
   Tooltip,
   useTheme,
 } from "@material-ui/core";
-import React, { useEffect } from "react";
+import React, { Component, useEffect } from "react";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
 import AddBoxIcon from "@material-ui/icons/AddBox";
@@ -25,6 +25,7 @@ import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
 import { actionTypes, taskSortTypes } from "../provider/reducer";
 import { useStateValue } from "../provider/StateProvider";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
+import RenderTask from "../components/RenderTask";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Tasks() {
   const [
-    { taskDocs, user, filterType, invertItems },
+    { taskDocs, filterType, invertItems, searchFilter },
     dispatch,
   ] = useStateValue();
 
@@ -169,6 +170,29 @@ function Tasks() {
     </Menu>
   );
 
+  function renderTaskItem(element: any) {
+    const filter = searchFilter.toLocaleLowerCase();
+
+    const title = element.data().title.toLocaleLowerCase();
+    const description = element.data().description.toLocaleLowerCase();
+
+    // if (
+    //   filter === "" &&
+    //   !(title.includes(filter) || description.includes(filter))
+    // )
+    //   return <div></div>;
+
+    return (
+      <div>
+        <TaskItem
+          key={element.id}
+          taskData={convertToTaskItemFrom(element)}
+          onEditItemClick={() => onEditClick(element)}
+        />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className={classes.root}>
@@ -192,7 +216,12 @@ function Tasks() {
             </Button>
           </Tooltip>
         </div>
-        <div style={{ display: "flex", gap: theme.spacing(1) }}>
+        <div
+          style={{
+            display: "flex",
+            gap: theme.spacing(1),
+          }}
+        >
           {filterType === taskSortTypes.CREATION_DATE ? (
             <div></div>
           ) : (
@@ -200,12 +229,13 @@ function Tasks() {
               color="primary"
               style={{ marginBottom: theme.spacing(2) }}
               variant="outlined"
-              label={"Filtered: " + filterType}
+              label={filterType}
               onDelete={onFilterRemoved}
             />
           )}
           {invertItems ? (
             <Chip
+              icon={<ImportExportIcon />}
               color="primary"
               style={{ marginBottom: theme.spacing(2) }}
               variant="outlined"
@@ -218,14 +248,14 @@ function Tasks() {
         </div>
         {taskDocs != null ? (
           taskDocs.map((e: any) => (
-            <TaskItem
-              key={e.id}
-              taskData={convertToTaskItemFrom(e)}
-              onEditItemClick={() => onEditClick(e)}
+            <RenderTask
+              searchFilter={searchFilter}
+              data={e}
+              onEditClick={onEditClick}
             />
           ))
         ) : (
-          <div>Empty</div>
+          <div>Empty</div> //TODO: Show something cool in empty
         )}
         <Fab
           className={classes.fab}

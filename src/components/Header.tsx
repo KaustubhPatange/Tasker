@@ -27,6 +27,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import HomeIcon from "@material-ui/icons/Home";
+import { actionTypes } from "../provider/reducer";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -124,7 +125,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Header(props: any) {
   const theme = useTheme();
-  const [{ user, showSearchBar }] = useStateValue();
+  const [{ user, showSearchBar }, dispatch] = useStateValue();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [, setMobileMoreAnchorEl] = React.useState(null);
@@ -151,7 +152,10 @@ function Header(props: any) {
   };
 
   const handleSearchEvent = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    console.log(event.currentTarget.value);
+    dispatch({
+      type: actionTypes.SET_SEARCH_FILTER,
+      searchFilter: event.currentTarget.value,
+    });
   };
 
   const handleDrawerOpen = () => {
@@ -202,7 +206,7 @@ function Header(props: any) {
             <MenuIcon />
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
-            To-do
+            Tasker
           </Typography>
           {showSearchBar ? (
             <div className={classes.search}>
