@@ -81,9 +81,14 @@ function TaskAddDialog(props: DialogProps) {
       setDescription(props.editData.description);
       setPickDateChecked(props.editData.isDue);
       setSelectedDate(new Date(props.editData.dateString));
+    } else {
+      setTitle("");
+      setDescription("");
+      setPickDateChecked(false);
+      setSelectedDate(new Date());
     }
     console.log("Render To-do: " + props.editMode);
-  }, [props.editMode]);
+  }, [props.editMode, props.state]);
 
   const onSnackbarClose = () => {
     setSnackbarState(false);
@@ -95,10 +100,6 @@ function TaskAddDialog(props: DialogProps) {
   };
   const handleOnDateChange = (date: Date | null) => {
     setSelectedDate(date);
-  };
-  const handleCloseDialog = () => {
-    setPickDateChecked(false);
-    props.onClose();
   };
   const handleTitleChange = (event: any) => {
     setTitle(event.currentTarget.value);
@@ -128,7 +129,7 @@ function TaskAddDialog(props: DialogProps) {
         props.editData,
         () => {
           createSnackbar("Successfully saved data", "info");
-          handleCloseDialog();
+          props.onClose();
         },
         (error: any) => {
           createSnackbar(
@@ -144,13 +145,13 @@ function TaskAddDialog(props: DialogProps) {
   return (
     <div>
       <Dialog
-        onClose={handleCloseDialog}
+        onClose={props.onClose}
         aria-labelledby="customized-dialog-title"
         open={props.state}
         fullWidth
       >
-        <DialogTitle id="customized-dialog-title" onClose={handleCloseDialog}>
-          Create or Edit a task
+        <DialogTitle id="customized-dialog-title" onClose={props.onClose}>
+          Create or edit a task
         </DialogTitle>
         <DialogContent dividers>
           <TextField
@@ -240,6 +241,7 @@ function pushToFirebase(
       description: description,
       dateString: currentDate,
       isDue: pickDueDate,
+      created: new Date().toISOString(),
       isCompleted: editData.isCompleted,
       isImportant: editData.isImportant,
     };
@@ -253,9 +255,10 @@ function pushToFirebase(
       title: title,
       description: description,
       dateString: currentDate,
+      created: new Date().toISOString(),
       isDue: pickDueDate,
       isCompleted: false,
-      isImportant: true,
+      isImportant: false,
     };
     ref
       .add(data)

@@ -1,11 +1,30 @@
-import { Fab, makeStyles, Typography } from "@material-ui/core";
+import {
+  Button,
+  Chip,
+  Divider,
+  Fab,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Tooltip,
+  useTheme,
+} from "@material-ui/core";
 import React, { useEffect } from "react";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
+import AddBoxIcon from "@material-ui/icons/AddBox";
 import TaskAddDialog from "../components/dialogs/TaskAddDialog";
 import { firebaseData, firebaseTaskData } from "../utils/config";
 import TaskItem from "../components/TaskItem";
 import { convertToTaskItemFrom } from "../utils/common";
+import SortIcon from "@material-ui/icons/Sort";
+import ImportantIcon from "@material-ui/icons/StarBorder";
+import EventIcon from "@material-ui/icons/Event";
+import SortByAlphaIcon from "@material-ui/icons/SortByAlpha";
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import { actionTypes, taskSortTypes } from "../provider/reducer";
+import { useStateValue } from "../provider/StateProvider";
+import ImportExportIcon from "@material-ui/icons/ImportExport";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,17 +42,29 @@ const useStyles = makeStyles((theme) => ({
     bottom: theme.spacing(2),
     right: theme.spacing(2),
   },
+  menuItemIcon: {
+    marginRight: theme.spacing(1),
+  },
 }));
 
 type TaskProps = {
   data: firebaseData[];
 };
 
-function Tasks(props: TaskProps) {
+function Tasks() {
+  const [
+    { taskDocs, user, filterType, invertItems },
+    dispatch,
+  ] = useStateValue();
+
   const classes = useStyles();
+  const theme = useTheme();
+  const [anchorEl, setAnchorEl] = React.useState<any>(null);
   const [openAddDialog, setOpenAddDialog] = React.useState(false);
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [editData, setEditData] = React.useState<firebaseTaskData | null>(null);
+
+  const isMenuOpen = Boolean(anchorEl);
 
   const handleFabClick = () => {
     setIsEditMode(false);
@@ -47,15 +78,146 @@ function Tasks(props: TaskProps) {
     setOpenAddDialog(true);
   };
 
+  const onSortButtonClick = (data: string) => {
+    dispatch({
+      type: actionTypes.SET_TASK_FILTER,
+      filterType: data,
+    });
+    setAnchorEl(null);
+  };
+
+  const onFilterRemoved = () => {
+    dispatch({
+      type: actionTypes.SET_TASK_FILTER,
+      filterType: taskSortTypes.CREATION_DATE,
+    });
+  };
+
+  const onInvertItemClicked = () => {
+    dispatch({
+      type: actionTypes.SET_INVERT,
+      invertItems: !invertItems,
+    });
+    setAnchorEl(null);
+  };
+
+  useEffect(() => {
+    console.log("Rendered Tasks size: " + taskDocs);
+  }, []);
+
+  const menuId = "primary-sort-context-menu";
+  const renderContextMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      getContentAnchorEl={null}
+      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      transformOrigin={{ vertical: "top", horizontal: "center" }}
+      id={menuId}
+      open={isMenuOpen}
+      onClose={() => {
+        setAnchorEl(null);
+      }}
+    >
+      <MenuItem
+        onClick={() => {
+          onSortButtonClick(taskSortTypes.IMPORTANT);
+        }}
+      >
+        <ImportantIcon fontSize="small" className={classes.menuItemIcon} />
+        {taskSortTypes.IMPORTANT}
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          onSortButtonClick(taskSortTypes.DUE_DATE);
+        }}
+      >
+        <EventIcon fontSize="small" className={classes.menuItemIcon} />
+        {taskSortTypes.DUE_DATE}
+      </MenuItem>
+      {/* <MenuItem
+        onClick={() => {
+          onSortButtonClick(taskSortTypes.CREATION_DATE);
+        }}
+      >
+        <AddBoxIcon fontSize="small" className={classes.menuItemIcon} />
+        {taskSortTypes.CREATION_DATE}
+      </MenuItem> */}
+      <MenuItem
+        onClick={() => {
+          onSortButtonClick(taskSortTypes.COMPLETED);
+        }}
+      >
+        <CheckCircleOutlineIcon
+          fontSize="small"
+          className={classes.menuItemIcon}
+        />
+        {taskSortTypes.COMPLETED}
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          onSortButtonClick(taskSortTypes.ALPHABETICALLY);
+        }}
+      >
+        <SortByAlphaIcon fontSize="small" className={classes.menuItemIcon} />
+        {taskSortTypes.ALPHABETICALLY}
+      </MenuItem>
+      <Divider />
+      <MenuItem onClick={onInvertItemClicked}>
+        <ImportExportIcon fontSize="small" className={classes.menuItemIcon} />
+        Invert
+      </MenuItem>
+    </Menu>
+  );
+
   return (
     <>
       <div className={classes.root}>
-        <div className={classes.header}>
-          <h1>Tasks</h1>
-          <AssignmentIcon className={classes.icon} />
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "auto 65px",
+            alignItems: "center",
+          }}
+        >
+          <div className={classes.header}>
+            <h1>Tasks</h1>
+            <AssignmentIcon className={classes.icon} />
+          </div>
+          <Tooltip title="Sort by">
+            <Button
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+              variant="outlined"
+            >
+              <SortIcon fontSize="small" />
+            </Button>
+          </Tooltip>
         </div>
-        {props.data != null ? (
-          props.data.map((e) => (
+        <div style={{ display: "flex", gap: theme.spacing(1) }}>
+          {filterType === taskSortTypes.CREATION_DATE ? (
+            <div></div>
+          ) : (
+            <Chip
+              color="primary"
+              style={{ marginBottom: theme.spacing(2) }}
+              variant="outlined"
+              label={"Filtered: " + filterType}
+              onDelete={onFilterRemoved}
+            />
+          )}
+          {invertItems ? (
+            <Chip
+              color="primary"
+              style={{ marginBottom: theme.spacing(2) }}
+              variant="outlined"
+              label="Inverted"
+              onDelete={onInvertItemClicked}
+            />
+          ) : (
+            <div></div>
+          )}
+        </div>
+        {taskDocs != null ? (
+          taskDocs.map((e: any) => (
             <TaskItem
               key={e.id}
               taskData={convertToTaskItemFrom(e)}
@@ -63,7 +225,7 @@ function Tasks(props: TaskProps) {
             />
           ))
         ) : (
-          <div></div>
+          <div>Empty</div>
         )}
         <Fab
           className={classes.fab}
@@ -79,6 +241,7 @@ function Tasks(props: TaskProps) {
           onClose={handleFabClick}
           state={openAddDialog}
         />
+        {renderContextMenu}
       </div>
     </>
   );

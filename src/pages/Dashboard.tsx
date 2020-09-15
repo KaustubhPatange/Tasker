@@ -1,42 +1,17 @@
-import {
-  Container,
-  CssBaseline,
-  Fab,
-  makeStyles,
-  Typography,
-} from "@material-ui/core";
+import { CssBaseline } from "@material-ui/core";
 import React, { useEffect } from "react";
 import Header from "../components/Header";
-import AddIcon from "@material-ui/icons/Add";
 import { useStateValue } from "../provider/StateProvider";
-import { navigationTypes } from "../provider/reducer";
+import { actionTypes, navigationTypes } from "../provider/reducer";
 import Tasks from "./Tasks";
 import { db, auth, firebaseData } from "../utils/config";
-
-const useStyles = makeStyles((theme) => ({
-  fab: {
-    position: "absolute",
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-  },
-  content: {
-    flexGrow: 1,
-    // marginLeft: theme.spacing(10),
-    padding: theme.spacing(3),
-  },
-  toolbar: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: theme.spacing(0, 2),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-  },
-}));
+import { applyDocFilter } from "../utils/common";
 
 function Dashboard(props: any) {
-  const classes = useStyles();
-  const [{ selected_drawer }, dispatch] = useStateValue();
+  const [
+    { selected_drawer, filterType, taskDocs, invertItems },
+    dispatch,
+  ] = useStateValue();
   const [docs, setDocs] = React.useState<firebaseData[]>();
 
   useEffect(() => {
@@ -46,31 +21,51 @@ function Dashboard(props: any) {
       .collection("tasks")
       .onSnapshot(
         (snapshot) => {
-          setDocs(snapshot.docs.reverse());
+          setDocs(snapshot.docs);
+          const items = !invertItems
+            ? applyDocFilter(snapshot.docs!!, filterType)
+            : applyDocFilter(snapshot.docs!!, filterType)?.reverse();
+          dispatch({
+            type: actionTypes.SET_TASK_DOCS,
+            taskDocs: items,
+          });
         },
         (error) => {}
       );
   }, []);
+
+  useEffect(() => {
+    console.log("Filter Type: " + filterType);
+    const items = !invertItems
+      ? applyDocFilter(docs!!, filterType)
+      : applyDocFilter(docs!!, filterType)?.reverse();
+    dispatch({
+      type: actionTypes.SET_TASK_DOCS,
+      taskDocs: items,
+    });
+    // setDocs(applyDocFilter(docs!!, filterType));
+  }, [filterType, invertItems]);
+
   return (
     <div>
       <CssBaseline />
       <Header
         darkSwitch={props.darkState}
         onThemeChange={props.onThemeChange}
-        renderNavigation={NavigationRender(selected_drawer, docs!!)}
+        renderNavigation={NavigationRender(selected_drawer)}
       />
     </div>
   );
 }
 
-function NavigationRender(selected_drawer: any, docs: firebaseData[]): any {
+function NavigationRender(selected_drawer: any): any {
   switch (selected_drawer) {
     case navigationTypes.HOME:
       return <div>Home</div>;
     case navigationTypes.IMPORTANT:
       return <div>Important</div>;
     case navigationTypes.TASKS:
-      return <Tasks data={docs} />;
+      return <Tasks />;
     default:
       return <div></div>;
   }

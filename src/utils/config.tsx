@@ -26,6 +26,7 @@ export type firebaseTaskData = {
   description: string;
   isDue: boolean;
   isCompleted: boolean;
+  created: string;
   dateString: string;
   isImportant: boolean;
   id: any;

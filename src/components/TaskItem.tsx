@@ -1,9 +1,11 @@
 import {
   Card,
   Checkbox,
+  ListItemIcon,
   makeStyles,
   Menu,
   MenuItem,
+  Tooltip,
   Typography,
   useTheme,
 } from "@material-ui/core";
@@ -13,6 +15,9 @@ import StarUnCheckedIcon from "@material-ui/icons/StarBorder";
 import { auth, db, firebaseTaskData } from "../utils/config";
 import TaskDeleteDialog from "./dialogs/TaskDeleteDialog";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EventIcon from "@material-ui/icons/Event";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -31,6 +36,10 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     textDecorationLine: "line-through",
   },
+  descriptionLayout: {
+    display: "flex",
+    alignItems: "center",
+  },
   titleStrike: {
     textDecorationLine: "line-through",
   },
@@ -39,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
   },
   importantIcon: {
     cursor: "pointer",
+  },
+  menuItemIcon: {
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -96,6 +108,7 @@ function TaskItem(props: TaskItemProps) {
           props.onEditItemClick();
         }}
       >
+        <EditIcon className={classes.menuItemIcon} fontSize="small" />
         Edit
       </MenuItem>
       <MenuItem
@@ -104,6 +117,7 @@ function TaskItem(props: TaskItemProps) {
           setDeleteItemDialog(true);
         }}
       >
+        <DeleteIcon className={classes.menuItemIcon} fontSize="small" />
         Delete
       </MenuItem>
     </Menu>
@@ -130,15 +144,29 @@ function TaskItem(props: TaskItemProps) {
                 <span>{props.taskData.title}</span>
               )}
             </Typography>
-            {props.taskData.isCompleted ? (
-              <span className={classes.descriptionStrike}>
-                {props.taskData.description}
-              </span>
-            ) : (
-              <span className={classes.description}>
-                {props.taskData.description}
-              </span>
-            )}
+            <div className={classes.descriptionLayout}>
+              {props.taskData.isDue ? (
+                <Tooltip
+                  title={new Date(props.taskData.dateString).toLocaleString()}
+                >
+                  <EventIcon
+                    style={{ fontSize: "13px", marginRight: theme.spacing(1) }}
+                    fontSize="small"
+                  />
+                </Tooltip>
+              ) : (
+                <div></div>
+              )}
+              {props.taskData.isCompleted ? (
+                <span className={classes.descriptionStrike}>
+                  {props.taskData.description}
+                </span>
+              ) : (
+                <span className={classes.description}>
+                  {props.taskData.description}
+                </span>
+              )}
+            </div>
           </div>
           <div
             onClick={() => {
@@ -152,7 +180,7 @@ function TaskItem(props: TaskItemProps) {
               <StarUnCheckedIcon />
             )}
           </div>
-          <div onClick={handleMenuOpen}>
+          <div style={{ cursor: "pointer" }} onClick={handleMenuOpen}>
             <MoreIcon />
           </div>
         </div>
