@@ -47,10 +47,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type TaskProps = {
-  data: firebaseData[];
-};
-
 function Tasks() {
   const [
     { taskDocs, user, filterType, invertItems },
@@ -103,6 +99,10 @@ function Tasks() {
 
   useEffect(() => {
     console.log("Rendered Tasks size: " + taskDocs);
+    dispatch({
+      type: actionTypes.SET_SHOW_SEARCH,
+      showSearchBar: true,
+    });
   }, []);
 
   const menuId = "primary-sort-context-menu";

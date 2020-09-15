@@ -6,6 +6,7 @@ import { actionTypes, navigationTypes } from "../provider/reducer";
 import Tasks from "./Tasks";
 import { db, auth, firebaseData } from "../utils/config";
 import { applyDocFilter } from "../utils/common";
+import Home from "./Home";
 
 function Dashboard(props: any) {
   const [
@@ -61,7 +62,7 @@ function Dashboard(props: any) {
 function NavigationRender(selected_drawer: any): any {
   switch (selected_drawer) {
     case navigationTypes.HOME:
-      return <div>Home</div>;
+      return <Home />;
     case navigationTypes.IMPORTANT:
       return <div>Important</div>;
     case navigationTypes.TASKS:

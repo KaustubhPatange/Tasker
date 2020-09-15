@@ -4,7 +4,8 @@ export const actionTypes = {
     SET_DRAWER_ITEM: "SET_DRAWER_ITEM",
     SET_TASK_DOCS: "SET_TASK_DOCS",
     SET_TASK_FILTER: "SET_TASK_FILTER",
-    SET_INVERT: "SET_INVERT"
+    SET_INVERT: "SET_INVERT",
+    SET_SHOW_SEARCH: "SET_SHOW_SEARCH",
 };
 
 export const navigationTypes = {
@@ -26,6 +27,7 @@ export const initialState = {
     taskDocs: null,
     filterType: taskSortTypes.CREATION_DATE,
     invertItems: false,
+    showSearchBar: false,
 };
 
 const reducer = (state: any, action: any) => {
@@ -60,6 +62,11 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
                 invertItems: action.invertItems
+            }
+        case actionTypes.SET_SHOW_SEARCH:
+            return {
+                ...state,
+                showSearchBar: action.showSearchBar
             }
         default:
             return state;

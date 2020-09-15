@@ -139,7 +139,7 @@ function Navigation(props: any) {
         <List>
           {[
             navigationTypes.HOME,
-            navigationTypes.IMPORTANT,
+            // navigationTypes.IMPORTANT,
             navigationTypes.TASKS,
           ].map((text, index) => (
             <ListItem
