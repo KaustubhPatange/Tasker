@@ -2,10 +2,10 @@
 
 A CRA to compete with any.do 💪
 
-| Branch   | CI builds                                                                                  |
-| -------- | ------------------------------------------------------------------------------------------ |
-| `master` | ![build](https://github.com/KaustubhPatange/To-do/workflows/build/badge.svg?branch=master) |
-| `dev`    | ![build](https://github.com/KaustubhPatange/To-do/workflows/build/badge.svg?branch=dev)    |
+| Branch   | CI builds                                                                                   |
+| -------- | ------------------------------------------------------------------------------------------- |
+| `master` | ![build](https://github.com/KaustubhPatange/Tasker/workflows/build/badge.svg?branch=master) |
+| `dev`    | ![build](https://github.com/KaustubhPatange/Tasker/workflows/build/badge.svg?branch=dev)    |
 
 ## Contributing
 
