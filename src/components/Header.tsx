@@ -27,6 +27,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import HomeIcon from "@material-ui/icons/Home";
+import { actionTypes } from "../provider/reducer";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -124,7 +125,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Header(props: any) {
   const theme = useTheme();
-  const [{ user }] = useStateValue();
+  const [{ user, showSearchBar }, dispatch] = useStateValue();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [, setMobileMoreAnchorEl] = React.useState(null);
@@ -151,7 +152,10 @@ function Header(props: any) {
   };
 
   const handleSearchEvent = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    console.log(event.currentTarget.value);
+    dispatch({
+      type: actionTypes.SET_SEARCH_FILTER,
+      searchFilter: event.currentTarget.value,
+    });
   };
 
   const handleDrawerOpen = () => {
@@ -170,9 +174,10 @@ function Header(props: any) {
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
       id={menuId}
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
+      getContentAnchorEl={null}
+      anchorOrigin={{ vertical: "center", horizontal: "center" }}
+      transformOrigin={{ vertical: "top", horizontal: "center" }}
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
@@ -201,22 +206,26 @@ function Header(props: any) {
             <MenuIcon />
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
-            To-do
+            Tasker
           </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
+          {showSearchBar ? (
+            <div className={classes.search}>
+              <div className={classes.searchIcon}>
+                <SearchIcon />
+              </div>
+              <InputBase
+                placeholder="Search…"
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+                onChange={handleSearchEvent}
+                inputProps={{ "aria-label": "search" }}
+              />
             </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              onChange={handleSearchEvent}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div>
+          ) : (
+            <div></div>
+          )}
           <div className={classes.grow} />
           <div className={classes.iconContainer}>
             <IconButton
