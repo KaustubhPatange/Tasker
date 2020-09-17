@@ -3,7 +3,7 @@ import { actionTypes } from "../provider/reducer";
 import { useStateValue } from "../provider/StateProvider";
 
 function Home() {
-  const [state, dispatch] = useStateValue();
+  const [, dispatch] = useStateValue();
   useEffect(() => {
     dispatch({
       type: actionTypes.SET_SHOW_SEARCH,

@@ -6,6 +6,8 @@
 .pnp.js
 .gitignore
 /.github
+src/utils/secrets.tsx
+src/utils/secrets.ts
 
 # testing
 /coverage

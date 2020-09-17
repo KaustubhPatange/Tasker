@@ -86,13 +86,13 @@ function Navigation(props: any) {
     }
   };
 
-  // Set initially selected value as Home
-  useEffect(() => {
-    dispatch({
-      type: actionTypes.SET_DRAWER_ITEM,
-      selected_drawer: navigationTypes.HOME,
-    });
-  }, []);
+  // // Set initially selected value as Home
+  // useEffect(() => {
+  //   dispatch({
+  //     type: actionTypes.SET_DRAWER_ITEM,
+  //     selected_drawer: navigationTypes.HOME,
+  //   });
+  // }, []);
 
   function isSelected(text: any): boolean {
     return selected_drawer == text;
@@ -138,7 +138,7 @@ function Navigation(props: any) {
         </div>
         <List>
           {[
-            navigationTypes.HOME,
+            //  navigationTypes.HOME,
             // navigationTypes.IMPORTANT,
             navigationTypes.TASKS,
           ].map((text, index) => (

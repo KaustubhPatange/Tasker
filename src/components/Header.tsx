@@ -21,7 +21,7 @@ import {
 } from "@material-ui/core";
 import { Brightness4, Brightness7 } from "@material-ui/icons";
 import { useStateValue } from "../provider/StateProvider";
-import { auth } from "../utils/config";
+import { auth } from "../utils/firebaseConfig";
 import Navigation from "./Navigation";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
@@ -46,9 +46,9 @@ const useStyles = makeStyles((theme) => ({
   search: {
     position: "relative",
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
+    backgroundColor: fade(theme.palette.common.white, 0.3),
     "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
+      backgroundColor: fade(theme.palette.common.white, 0.5),
     },
     marginRight: theme.spacing(2),
     marginLeft: 0,

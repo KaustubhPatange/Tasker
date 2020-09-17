@@ -1,5 +1,5 @@
 import { taskSortTypes } from "../provider/reducer";
-import { firebaseData, firebaseTaskData } from "./config"
+import { firebaseData, firebaseTaskData } from "./firebaseConfig"
 
 export function convertToTaskItemFrom(data: firebaseData): firebaseTaskData {
     return {

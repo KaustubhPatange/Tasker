@@ -7,11 +7,12 @@ import {
   DialogTitle,
 } from "@material-ui/core";
 import React from "react";
-import { db, auth } from "../../utils/config";
+import { firestoreDb, auth } from "../../utils/firebaseConfig";
 
 function TaskDeleteDialog(props: DeleteProps) {
   const onDeleteClick = () => {
-    db.collection("users")
+    firestoreDb
+      .collection("users")
       .doc(auth.currentUser?.uid!!)
       .collection("tasks")
       .doc(props.id)

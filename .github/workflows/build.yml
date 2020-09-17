@@ -9,13 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: chmod -R 777 ./
-      - name: Creating temporary file
-        uses: DamianReeves/write-file-action
-        with:
-          path: ${{ env.home}}/src/utils/secrets.ts
-          contents: |
-            echo ${{ secrets.SECRETS }} 
-          write-mode: append
+      - run: 'echo "$SSH_KEY" > src/utils/secrets.ts'
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.SECRETS_MULTI}}
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:

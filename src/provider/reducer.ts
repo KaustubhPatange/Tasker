@@ -30,6 +30,7 @@ export const initialState = {
     invertItems: false,
     showSearchBar: false,
     searchFilter: "",
+    selected_drawer: navigationTypes.TASKS,
 };
 
 const reducer = (state: any, action: any) => {
