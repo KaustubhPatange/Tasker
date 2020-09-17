@@ -27,7 +27,11 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDateTimePicker,
 } from "@material-ui/pickers";
-import { db, auth, firebaseTaskData } from "../../utils/config";
+import {
+  firestoreDb,
+  auth,
+  firebaseTaskData,
+} from "../../utils/firebaseConfig";
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -231,7 +235,7 @@ function pushToFirebase(
   onSuccess: () => void,
   onError: (error: any) => void
 ) {
-  const ref = db
+  const ref = firestoreDb
     .collection("users")
     .doc(auth.currentUser?.uid!!)
     .collection("tasks");

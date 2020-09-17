@@ -14,7 +14,7 @@ import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import TaskAddDialog from "../components/dialogs/TaskAddDialog";
-import { firebaseData, firebaseTaskData } from "../utils/config";
+import { firebaseData, firebaseTaskData } from "../utils/firebaseConfig";
 import TaskItem from "../components/TaskItem";
 import { convertToTaskItemFrom } from "../utils/common";
 import SortIcon from "@material-ui/icons/Sort";
@@ -255,7 +255,7 @@ function Tasks() {
             />
           ))
         ) : (
-          <div>Empty</div> //TODO: Show something cool in empty
+          <div></div> //TODO: Show something cool in empty
         )}
         <Fab
           className={classes.fab}

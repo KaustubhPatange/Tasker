@@ -1,7 +1,7 @@
 import { Button, makeStyles } from "@material-ui/core";
 import firebase from "firebase";
 import React from "react";
-import { auth, provider, db } from "../utils/config";
+import { auth, provider, firestoreDb } from "../utils/firebaseConfig";
 import { actionTypes } from "../provider/reducer";
 import { useStateValue } from "../provider/StateProvider";
 
@@ -37,7 +37,7 @@ function Login() {
           auth
             .signInWithPopup(provider)
             .then((result) => {
-              const ref = db.collection("users").doc(result.user?.uid);
+              const ref = firestoreDb.collection("users").doc(result.user?.uid);
               ref
                 .set({
                   displayName: result.user?.displayName,

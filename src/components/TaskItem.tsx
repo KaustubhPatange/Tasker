@@ -1,7 +1,6 @@
 import {
   Card,
   Checkbox,
-  ListItemIcon,
   makeStyles,
   Menu,
   MenuItem,
@@ -12,7 +11,7 @@ import {
 import React from "react";
 import StarCheckedIcon from "@material-ui/icons/Star";
 import StarUnCheckedIcon from "@material-ui/icons/StarBorder";
-import { auth, db, firebaseTaskData } from "../utils/config";
+import { auth, firestoreDb, firebaseTaskData } from "../utils/firebaseConfig";
 import TaskDeleteDialog from "./dialogs/TaskDeleteDialog";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import EditIcon from "@material-ui/icons/Edit";
@@ -63,7 +62,7 @@ function TaskItem(props: TaskItemProps) {
   const isMenuOpen = Boolean(anchorEl);
 
   const handleImportantClick = (value: boolean) => {
-    const data = db
+    const data = firestoreDb
       .collection("users")
       .doc(auth?.currentUser?.uid!!)
       .collection("tasks")
@@ -74,7 +73,7 @@ function TaskItem(props: TaskItemProps) {
   };
 
   const handleOnCheckboxClick = (value: boolean) => {
-    const data = db
+    const data = firestoreDb
       .collection("users")
       .doc(auth?.currentUser?.uid!!)
       .collection("tasks")

@@ -1,7 +1,7 @@
 import React from "react";
 import { useStateValue } from "../provider/StateProvider";
 import { convertToTaskItemFrom } from "../utils/common";
-import { firebaseData } from "../utils/config";
+import { firebaseData } from "../utils/firebaseConfig";
 import TaskItem from "./TaskItem";
 
 function RenderTask(props: RenderProps) {

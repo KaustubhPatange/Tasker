@@ -18,7 +18,7 @@ import {
 import Login from "./pages/Login";
 import { useStateValue } from "./provider/StateProvider";
 import { actionTypes } from "./provider/reducer";
-import { auth } from "./utils/config";
+import { auth } from "./utils/firebaseConfig";
 import Load from "./pages/Load";
 import Dashboard from "./pages/Dashboard";
 

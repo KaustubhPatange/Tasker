@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import { useStateValue } from "../provider/StateProvider";
 import { actionTypes, navigationTypes } from "../provider/reducer";
 import Tasks from "./Tasks";
-import { db, auth } from "../utils/config";
+import { firestoreDb, auth } from "../utils/firebaseConfig";
 import { applyDocFilter } from "../utils/common";
 import Home from "./Home";
 
@@ -16,7 +16,8 @@ function Dashboard(props: any) {
 
   useEffect(() => {
     console.log("Render dashboard");
-    db.collection("users")
+    firestoreDb
+      .collection("users")
       .doc(auth.currentUser?.uid!!)
       .collection("tasks")
       .onSnapshot(
