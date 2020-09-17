@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: chmod -R 777 ./
-      - run: echo ${{ secrets.SECRETS }} > src/utils/secrets.tsx
+      - run: echo ${{ secrets.SECRETS }} > /src/utils/secrets.tsx
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
