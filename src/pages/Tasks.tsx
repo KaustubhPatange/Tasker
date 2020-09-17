@@ -26,6 +26,7 @@ import { actionTypes, taskSortTypes } from "../provider/reducer";
 import { useStateValue } from "../provider/StateProvider";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import RenderTask from "../components/RenderTask";
+import BlockIcon from "@material-ui/icons/Block";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Tasks() {
   const [
-    { taskDocs, filterType, invertItems, searchFilter },
+    { taskDocs, filterType, invertItems, searchFilter, stripItems },
     dispatch,
   ] = useStateValue();
 
@@ -98,6 +99,14 @@ function Tasks() {
     setAnchorEl(null);
   };
 
+  const onStripItemClicked = () => {
+    dispatch({
+      type: actionTypes.SET_STRIP,
+      stripItems: !stripItems,
+    });
+    setAnchorEl(null);
+  };
+
   useEffect(() => {
     console.log("Rendered Tasks size: " + taskDocs);
     dispatch({
@@ -135,14 +144,6 @@ function Tasks() {
         <EventIcon fontSize="small" className={classes.menuItemIcon} />
         {taskSortTypes.DUE_DATE}
       </MenuItem>
-      {/* <MenuItem
-        onClick={() => {
-          onSortButtonClick(taskSortTypes.CREATION_DATE);
-        }}
-      >
-        <AddBoxIcon fontSize="small" className={classes.menuItemIcon} />
-        {taskSortTypes.CREATION_DATE}
-      </MenuItem> */}
       <MenuItem
         onClick={() => {
           onSortButtonClick(taskSortTypes.COMPLETED);
@@ -166,6 +167,20 @@ function Tasks() {
       <MenuItem onClick={onInvertItemClicked}>
         <ImportExportIcon fontSize="small" className={classes.menuItemIcon} />
         Invert
+      </MenuItem>
+
+      <MenuItem
+        disabled={
+          ![
+            taskSortTypes.IMPORTANT,
+            taskSortTypes.COMPLETED,
+            taskSortTypes.DUE_DATE,
+          ].includes(filterType)
+        }
+        onClick={onStripItemClicked}
+      >
+        <BlockIcon fontSize="small" className={classes.menuItemIcon} />
+        Strip
       </MenuItem>
     </Menu>
   );
@@ -241,6 +256,18 @@ function Tasks() {
               variant="outlined"
               label="Inverted"
               onDelete={onInvertItemClicked}
+            />
+          ) : (
+            <div></div>
+          )}
+          {stripItems ? (
+            <Chip
+              icon={<BlockIcon />}
+              color="primary"
+              style={{ marginBottom: theme.spacing(2) }}
+              variant="outlined"
+              label="Striped"
+              onDelete={onStripItemClicked}
             />
           ) : (
             <div></div>

@@ -4,13 +4,14 @@ import Header from "../components/Header";
 import { useStateValue } from "../provider/StateProvider";
 import { actionTypes, navigationTypes } from "../provider/reducer";
 import Tasks from "./Tasks";
-import { firestoreDb, auth } from "../utils/firebaseConfig";
-import { applyDocFilter } from "../utils/common";
+import { firestoreDb, auth, firebaseData } from "../utils/firebaseConfig";
+import { applyDocFilter, applyStripFilter } from "../utils/common";
 import Home from "./Home";
 
 function Dashboard(props: any) {
+  const [docs, setDocs] = React.useState<firebaseData[]>();
   const [
-    { selected_drawer, filterType, taskDocs, invertItems },
+    { selected_drawer, filterType, taskDocs, invertItems, stripItems },
     dispatch,
   ] = useStateValue();
 
@@ -22,6 +23,7 @@ function Dashboard(props: any) {
       .collection("tasks")
       .onSnapshot(
         (snapshot) => {
+          setDocs(snapshot.docs);
           const items = !invertItems
             ? applyDocFilter(snapshot.docs!!, filterType)
             : applyDocFilter(snapshot.docs!!, filterType)?.reverse();
@@ -36,14 +38,15 @@ function Dashboard(props: any) {
 
   useEffect(() => {
     console.log("Filter Type: " + filterType);
-    const items = !invertItems
-      ? applyDocFilter(taskDocs!!, filterType)
-      : applyDocFilter(taskDocs!!, filterType)?.reverse();
+    let items = stripItems ? applyStripFilter(docs!!, filterType) : docs!!;
+    items = !invertItems
+      ? applyDocFilter(items!!, filterType)
+      : applyDocFilter(items!!, filterType)?.reverse();
     dispatch({
       type: actionTypes.SET_TASK_DOCS,
       taskDocs: items,
     });
-  }, [filterType, invertItems]);
+  }, [filterType, invertItems, stripItems]);
 
   return (
     <div>
