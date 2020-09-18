@@ -10,23 +10,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
-import {
-  Avatar,
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from "@material-ui/core";
+import { Avatar } from "@material-ui/core";
 import { Brightness4, Brightness7 } from "@material-ui/icons";
 import { useStateValue } from "../provider/StateProvider";
 import { auth } from "../utils/firebaseConfig";
 import Navigation from "./Navigation";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import HomeIcon from "@material-ui/icons/Home";
 import { actionTypes } from "../provider/reducer";
 const drawerWidth = 240;
 
@@ -124,7 +112,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Header(props: any) {
-  const theme = useTheme();
   const [{ user, showSearchBar }, dispatch] = useStateValue();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
