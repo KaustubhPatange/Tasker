@@ -1,14 +1,6 @@
-import {
-  Container,
-  createMuiTheme,
-  CssBaseline,
-  Fab,
-  makeStyles,
-  ThemeProvider,
-} from "@material-ui/core";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 import React, { useEffect } from "react";
 import "./App.css";
-import Header from "./components/Header";
 import {
   orange,
   lightBlue,
@@ -46,7 +38,10 @@ function App() {
   useEffect(() => {
     auth.onAuthStateChanged((authUser) => {
       if (!loadComplete) {
-        setLoadComplete(true);
+        // Let's give user some time to enjoy the animation shall we?
+        setTimeout(() => {
+          setLoadComplete(true);
+        }, 500);
       }
       dispatch({
         type: actionTypes.SET_USER,
