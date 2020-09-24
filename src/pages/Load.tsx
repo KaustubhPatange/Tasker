@@ -1,5 +1,7 @@
 import { CircularProgress, makeStyles } from "@material-ui/core";
 import React from "react";
+import Lottie from "react-lottie";
+import animationData from "../assets/plane.json";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -9,11 +11,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const defaultOptions = {
+  loop: true,
+  autoplay: true,
+  animationData: animationData,
+  rendererSettings: {
+    preserveAspectRatio: "xMidYMid slice",
+  },
+};
+
 export default function Load() {
   const classes = useStyles();
   return (
     <div className={classes.container}>
-      <CircularProgress />
+      <Lottie height={200} width={200} options={defaultOptions} />
     </div>
   );
 }
