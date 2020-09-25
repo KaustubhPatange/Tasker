@@ -4,7 +4,6 @@ import { firebaseData } from "./secrets";
 const firebaseApp = firebase.initializeApp(firebaseData);
 const firestoreDb = firebaseApp.firestore();
 const auth = firebase.auth();
-const provider = new firebase.auth.GoogleAuthProvider();
 
 export type firebaseData = firebase.firestore.QueryDocumentSnapshot<
   firebase.firestore.DocumentData
@@ -21,4 +20,4 @@ export type firebaseTaskData = {
   id: any;
 };
 
-export { auth, provider, firestoreDb };
+export { auth, firestoreDb };
