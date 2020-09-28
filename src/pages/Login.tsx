@@ -1,4 +1,4 @@
-import { Button, makeStyles } from "@material-ui/core";
+import { Button, Card, Divider, makeStyles } from "@material-ui/core";
 import firebase from "firebase";
 import React from "react";
 import { auth, firestoreDb } from "../utils/firebaseConfig";
@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh",
   },
   button: {
+    margin: theme.spacing(0.4),
     textTransform: "none",
     background: "#ffffff",
     "&:hover": {
@@ -19,7 +20,11 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   image: {
-    marginRight: theme.spacing(2),
+    height: "20px",
+    marginRight: theme.spacing(1.5),
+  },
+  card: {
+    minWidth: 275,
   },
 }));
 
@@ -52,9 +57,7 @@ function Login() {
                   console.log("Data saved: " + result.user?.email);
                 });
             })
-            .catch((error) => {
-              alert(error.message);
-            });
+            .catch((error) => {});
         })
         .catch((error) => {
           alert("Error: " + error.message);
@@ -80,70 +83,75 @@ function Login() {
 
   return (
     <div className={classes.container}>
-      <div style={{ display: "table-row", justifyContent: "center" }}>
-        <div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          placeItems: "center",
+        }}
+      >
+        <img
+          height="300px"
+          style={{ textAlign: "center", color: "#066FEF" }}
+          src="https://assets-ouch.icons8.com/download/557/a0d61423-fae5-4b87-b204-9f82ef5d70f0.png?filename=lime-list-is-empty.png"
+        />
+        <Card elevation={5} className={classes.card}>
           <Button
+            fullWidth
+            disableElevation={false}
             className={classes.button}
             onClick={handleGoogleSignIn}
-            variant="contained"
             color="primary"
           >
             <img
               className={classes.image}
-              height="20px"
               src="https://img.icons8.com/color/50/000000/google-logo.png"
             />
-            Login with Google
+            <span>Login with Google &nbsp;&nbsp;&nbsp;</span>
           </Button>
-        </div>
-        <br />
-        <div>
+          <Divider />
           <Button
+            fullWidth
+            disableElevation={false}
             className={classes.button}
             onClick={handleGithubSignIn}
-            variant="contained"
             color="primary"
           >
             <img
-              src="https://image.flaticon.com/icons/png/512/25/25231.png"
-              height="20px"
               className={classes.image}
+              src="https://img.icons8.com/material-sharp/48/000000/github.png"
             />
-            Login with Github
+            <span>Login with Github &nbsp;&nbsp;&nbsp;</span>
           </Button>
-        </div>
-        <br />
-        <div>
+          <Divider />
           <Button
+            fullWidth
+            disableElevation={false}
             className={classes.button}
             onClick={handleTwitterSignIn}
-            variant="contained"
             color="primary"
           >
             <img
-              src="https://mobiledevmemo.com/wp-content/uploads/2014/05/Twitter-Bird.png"
-              height="20px"
               className={classes.image}
+              src="https://img.icons8.com/color/48/000000/twitter.png"
             />
-            Login with Twitter
+            <span>Login with Twitter &nbsp;&nbsp;&nbsp;</span>
           </Button>
-        </div>
-        <br />
-        <div>
+          <Divider />
           <Button
+            fullWidth
+            disableElevation={false}
             className={classes.button}
             onClick={handleFacebookSignIn}
-            variant="contained"
             color="primary"
           >
             <img
-              src="https://www.clipartmax.com/png/small/223-2237173_facebook-messenger-social-media-computer-icons-clip-facebook-f-logo-svg.png"
-              height="20px"
               className={classes.image}
+              src="https://img.icons8.com/color/48/000000/facebook.png"
             />
-            Login with Facebook
+            <span>Login with Facebook</span>
           </Button>
-        </div>
+        </Card>
       </div>
     </div>
   );

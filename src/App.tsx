@@ -51,24 +51,25 @@ function App() {
   }, []);
 
   if (!loadComplete) {
-    return (
-      <ThemeProvider theme={darkTheme}>
-        <Load />
-      </ThemeProvider>
-    );
+    return <Load />;
   } else {
     const handleDisplayTheme = () => {
       localStorage.setItem("darkState", String(darkState));
       setDarkState(!darkState);
     };
     return (
-      <ThemeProvider theme={darkTheme}>
+      <>
         {user == null ? (
           <Login />
         ) : (
-          <Dashboard darkState={darkState} onThemeChange={handleDisplayTheme} />
+          <ThemeProvider theme={darkTheme}>
+            <Dashboard
+              darkState={darkState}
+              onThemeChange={handleDisplayTheme}
+            />
+          </ThemeProvider>
         )}
-      </ThemeProvider>
+      </>
     );
   }
 }
