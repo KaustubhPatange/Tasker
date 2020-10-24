@@ -1,7 +1,7 @@
-import { Button, makeStyles } from "@material-ui/core";
+import { Button, Card, Divider, makeStyles } from "@material-ui/core";
 import firebase from "firebase";
 import React from "react";
-import { auth, provider, firestoreDb } from "../utils/firebaseConfig";
+import { auth, firestoreDb } from "../utils/firebaseConfig";
 import { actionTypes } from "../provider/reducer";
 import { useStateValue } from "../provider/StateProvider";
 
@@ -12,19 +12,27 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh",
   },
   button: {
+    margin: theme.spacing(0.4),
+    textTransform: "none",
     background: "#ffffff",
     "&:hover": {
       background: "#ffffff",
     },
   },
   image: {
-    marginRight: theme.spacing(1),
+    height: "20px",
+    marginRight: theme.spacing(1.5),
+  },
+  card: {
+    minWidth: 275,
   },
 }));
+
 function Login() {
   const classes = useStyles();
   const [state, dispatch] = useStateValue();
-  const handleClick = () => {
+
+  const signInFlow = (provider: firebase.auth.AuthProvider) => {
     if (auth.currentUser != null) {
       dispatch({
         type: actionTypes.SET_USER,
@@ -49,9 +57,7 @@ function Login() {
                   console.log("Data saved: " + result.user?.email);
                 });
             })
-            .catch((error) => {
-              alert(error.message);
-            });
+            .catch((error) => {});
         })
         .catch((error) => {
           alert("Error: " + error.message);
@@ -59,21 +65,94 @@ function Login() {
     }
   };
 
+  const handleGoogleSignIn = () => {
+    signInFlow(new firebase.auth.GoogleAuthProvider());
+  };
+
+  const handleFacebookSignIn = () => {
+    signInFlow(new firebase.auth.FacebookAuthProvider());
+  };
+
+  const handleGithubSignIn = () => {
+    signInFlow(new firebase.auth.GithubAuthProvider());
+  };
+
+  const handleTwitterSignIn = () => {
+    signInFlow(new firebase.auth.TwitterAuthProvider());
+  };
+
   return (
     <div className={classes.container}>
-      <Button
-        className={classes.button}
-        onClick={handleClick}
-        variant="contained"
-        color="primary"
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          placeItems: "center",
+        }}
       >
         <img
-          className={classes.image}
-          height="20px"
-          src="https://img.icons8.com/color/50/000000/google-logo.png"
+          height="300px"
+          style={{ textAlign: "center", color: "#066FEF" }}
+          src="https://assets-ouch.icons8.com/download/557/a0d61423-fae5-4b87-b204-9f82ef5d70f0.png?filename=lime-list-is-empty.png"
         />
-        Sign In
-      </Button>
+        <Card elevation={5} className={classes.card}>
+          <Button
+            fullWidth
+            disableElevation={false}
+            className={classes.button}
+            onClick={handleGoogleSignIn}
+            color="primary"
+          >
+            <img
+              className={classes.image}
+              src="https://img.icons8.com/color/50/000000/google-logo.png"
+            />
+            <span>Login with Google &nbsp;&nbsp;&nbsp;</span>
+          </Button>
+          <Divider />
+          <Button
+            fullWidth
+            disableElevation={false}
+            className={classes.button}
+            onClick={handleGithubSignIn}
+            color="primary"
+          >
+            <img
+              className={classes.image}
+              src="https://img.icons8.com/material-sharp/48/000000/github.png"
+            />
+            <span>Login with Github &nbsp;&nbsp;&nbsp;</span>
+          </Button>
+          <Divider />
+          <Button
+            fullWidth
+            disableElevation={false}
+            className={classes.button}
+            onClick={handleTwitterSignIn}
+            color="primary"
+          >
+            <img
+              className={classes.image}
+              src="https://img.icons8.com/color/48/000000/twitter.png"
+            />
+            <span>Login with Twitter &nbsp;&nbsp;&nbsp;</span>
+          </Button>
+          <Divider />
+          <Button
+            fullWidth
+            disableElevation={false}
+            className={classes.button}
+            onClick={handleFacebookSignIn}
+            color="primary"
+          >
+            <img
+              className={classes.image}
+              src="https://img.icons8.com/color/48/000000/facebook.png"
+            />
+            <span>Login with Facebook</span>
+          </Button>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -9,13 +9,11 @@ import {
   Tooltip,
   useTheme,
 } from "@material-ui/core";
-import React, { Component, useEffect } from "react";
+import React, { useEffect } from "react";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
-import AddBoxIcon from "@material-ui/icons/AddBox";
 import TaskAddDialog from "../components/dialogs/TaskAddDialog";
 import { firebaseData, firebaseTaskData } from "../utils/firebaseConfig";
-import TaskItem from "../components/TaskItem";
 import { convertToTaskItemFrom } from "../utils/common";
 import SortIcon from "@material-ui/icons/Sort";
 import ImportantIcon from "@material-ui/icons/StarBorder";
@@ -26,6 +24,8 @@ import { actionTypes, taskSortTypes } from "../provider/reducer";
 import { useStateValue } from "../provider/StateProvider";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
 import RenderTask from "../components/RenderTask";
+import BlockIcon from "@material-ui/icons/Block";
+import FadeIn from "react-fade-in";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,6 +42,15 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     bottom: theme.spacing(2),
     right: theme.spacing(2),
+    [theme.breakpoints.up("sm")]: {
+      visibility: "hidden",
+    },
+  },
+  addButton: {
+    visibility: "hidden",
+    [theme.breakpoints.up("sm")]: {
+      visibility: "visible",
+    },
   },
   menuItemIcon: {
     marginRight: theme.spacing(1),
@@ -50,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Tasks() {
   const [
-    { taskDocs, filterType, invertItems, searchFilter },
+    { taskDocs, filterType, invertItems, searchFilter, stripItems },
     dispatch,
   ] = useStateValue();
 
@@ -98,6 +107,14 @@ function Tasks() {
     setAnchorEl(null);
   };
 
+  const onStripItemClicked = () => {
+    dispatch({
+      type: actionTypes.SET_STRIP,
+      stripItems: !stripItems,
+    });
+    setAnchorEl(null);
+  };
+
   useEffect(() => {
     console.log("Rendered Tasks size: " + taskDocs);
     dispatch({
@@ -135,14 +152,6 @@ function Tasks() {
         <EventIcon fontSize="small" className={classes.menuItemIcon} />
         {taskSortTypes.DUE_DATE}
       </MenuItem>
-      {/* <MenuItem
-        onClick={() => {
-          onSortButtonClick(taskSortTypes.CREATION_DATE);
-        }}
-      >
-        <AddBoxIcon fontSize="small" className={classes.menuItemIcon} />
-        {taskSortTypes.CREATION_DATE}
-      </MenuItem> */}
       <MenuItem
         onClick={() => {
           onSortButtonClick(taskSortTypes.COMPLETED);
@@ -167,31 +176,22 @@ function Tasks() {
         <ImportExportIcon fontSize="small" className={classes.menuItemIcon} />
         Invert
       </MenuItem>
+
+      <MenuItem
+        disabled={
+          ![
+            taskSortTypes.IMPORTANT,
+            taskSortTypes.COMPLETED,
+            taskSortTypes.DUE_DATE,
+          ].includes(filterType)
+        }
+        onClick={onStripItemClicked}
+      >
+        <BlockIcon fontSize="small" className={classes.menuItemIcon} />
+        Strip
+      </MenuItem>
     </Menu>
   );
-
-  function renderTaskItem(element: any) {
-    const filter = searchFilter.toLocaleLowerCase();
-
-    const title = element.data().title.toLocaleLowerCase();
-    const description = element.data().description.toLocaleLowerCase();
-
-    // if (
-    //   filter === "" &&
-    //   !(title.includes(filter) || description.includes(filter))
-    // )
-    //   return <div></div>;
-
-    return (
-      <div>
-        <TaskItem
-          key={element.id}
-          taskData={convertToTaskItemFrom(element)}
-          onEditItemClick={() => onEditClick(element)}
-        />
-      </div>
-    );
-  }
 
   return (
     <>
@@ -199,14 +199,25 @@ function Tasks() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "auto 65px",
+            gridTemplateColumns: "auto 65px 65px",
             alignItems: "center",
+            gap: "15px",
           }}
         >
           <div className={classes.header}>
             <h1>Tasks</h1>
             <AssignmentIcon className={classes.icon} />
           </div>
+          <Tooltip title="Add Task">
+            <Button
+              className={classes.addButton}
+              color="primary"
+              onClick={handleFabClick}
+              variant="contained"
+            >
+              <AddIcon fontSize="small" />
+            </Button>
+          </Tooltip>
           <Tooltip title="Sort by">
             <Button
               onClick={(e) => setAnchorEl(e.currentTarget)}
@@ -245,14 +256,28 @@ function Tasks() {
           ) : (
             <div></div>
           )}
+          {stripItems ? (
+            <Chip
+              icon={<BlockIcon />}
+              color="primary"
+              style={{ marginBottom: theme.spacing(2) }}
+              variant="outlined"
+              label="Striped"
+              onDelete={onStripItemClicked}
+            />
+          ) : (
+            <div></div>
+          )}
         </div>
         {taskDocs != null ? (
           taskDocs.map((e: any) => (
-            <RenderTask
-              searchFilter={searchFilter}
-              data={e}
-              onEditClick={onEditClick}
-            />
+            <FadeIn>
+              <RenderTask
+                searchFilter={searchFilter}
+                data={e}
+                onEditClick={onEditClick}
+              />
+            </FadeIn>
           ))
         ) : (
           <div></div> //TODO: Show something cool in empty

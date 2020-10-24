@@ -13,6 +13,18 @@ export function convertToTaskItemFrom(data: firebaseData): firebaseTaskData {
         id: data.id,
     }
 }
+export function applyStripFilter(data: firebaseData[], type: string): firebaseData[] {
+    switch (type) {
+        case taskSortTypes.COMPLETED:
+            return data.filter(e => e.data().isCompleted);
+        case taskSortTypes.IMPORTANT:
+            return data.filter(e => e.data().isImportant);
+        case taskSortTypes.DUE_DATE:
+            return data.filter(e => e.data().isDue);
+        default:
+            return data;
+    }
+}
 
 export function applyDocFilter(data: firebaseData[], type: string): firebaseData[] {
     switch (type) {

@@ -32,12 +32,6 @@ export default function CustomizedDialogs(props: any) {
               <li>
                 <b>Kaustubh Patange</b>: Project designer &#38; developer
               </li>
-              <li>
-                <b>Tanmay Patil</b>: Tester
-              </li>
-              <li>
-                <b>Ketan Kudikyal</b>: Tester
-              </li>
             </ul>
           </DialogContentText>
         </DialogContent>

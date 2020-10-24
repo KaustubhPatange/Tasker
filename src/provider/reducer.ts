@@ -5,6 +5,7 @@ export const actionTypes = {
     SET_TASK_DOCS: "SET_TASK_DOCS",
     SET_TASK_FILTER: "SET_TASK_FILTER",
     SET_INVERT: "SET_INVERT",
+    SET_STRIP: "SET_STRIP",
     SET_SHOW_SEARCH: "SET_SHOW_SEARCH",
     SET_SEARCH_FILTER: "SET_SEARCH_FILTER",
 };
@@ -28,6 +29,7 @@ export const initialState = {
     taskDocs: null,
     filterType: taskSortTypes.CREATION_DATE,
     invertItems: false,
+    stripItems: false,
     showSearchBar: false,
     searchFilter: "",
     selected_drawer: navigationTypes.TASKS,
@@ -75,6 +77,11 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
                 searchFilter: action.searchFilter
+            }
+        case actionTypes.SET_STRIP:
+            return {
+                ...state,
+                stripItems: action.stripItems
             }
         default:
             return state;
