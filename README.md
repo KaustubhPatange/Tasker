@@ -1,6 +1,8 @@
 # Tasker
 
-A CRA to compete with any.do 💪
+<h3 style="color:red">⚠️ Under construction ⚠️</h3>
+
+A CRA to compete with any.do 💪.
 
 | Branch   | CI builds                                                                                   |
 | -------- | ------------------------------------------------------------------------------------------- |
@@ -11,7 +13,7 @@ A CRA to compete with any.do 💪
 
 Contributions are always welcome, no matter how large or small. Before contributing, please read the [code of conduct](CODE_OF_CONDUCT.md).
 
-As per [code of conduct](CODE_OF_CONDUCT.md) `master` branch is restricted for `push` request. It can only update on `pull request`. Switch to `dev` branch to know more.
+The `master` branch is restricted for `push` request. It can only update on `pull request` from `dev` branch.
 
 ## Setup your development server
 
@@ -29,11 +31,19 @@ git clone -b dev https://github.com/KaustubhPatange/To-do.git
 npm install
 ```
 
+- Save your firebase credential config in `src/utils/secrets.ts`.
+
 - Start the server.
 
 ```
 npm start
 ```
+
+## First look
+
+The current status of this branch looks like below, but it will likely change in future commits.
+
+![](art/showcase.gif)
 
 ## License
 
